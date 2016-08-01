@@ -1,0 +1,53 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<div id="left">
+    <div data-bind="visible: concepts().length === 0">
+        <h3>Metabolites</h3>
+        <form data-bind="submit: getConcepts">
+            <textarea rows="15" name="metabolites" style="width: 100%"></textarea>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+
+    <!--<div class="panel">
+        <ul>
+            <li>
+                <span class="fa fa-long-arrow-right fa-2x"></span>
+            </li>
+        </ul>
+    </div>-->
+    
+    <!-- ko if: concepts().length > 0 -->
+    <div id="metabolites">
+        <table>
+            <thead>
+                <tr>
+                    <th><input type="checkbox" /></th>
+                    <th>Metabolite</th>
+                    <th>ID</th>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach: concepts">
+                <tr>
+                    <td><input type="checkbox" /></td>
+                    <td data-bind="text: name"></td>
+                    <td data-bind="text: chebi_id"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <!-- /ko -->
+</div>
+
+<div id="parameters">
+    Score <input type="range" />
+</div>
+
+<div class="panel" id="graph">
+    <div data-bind="graph: true"></div>
+</div>
+
+
+{% endblock %}

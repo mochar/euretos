@@ -1,0 +1,48 @@
+body {
+    background-color: #eee;
+    font-size: .8em;
+    font-family: "Helvetica", "Arial", sans-serif;
+    color: #444;
+}
+
+h1,
+h2,
+strong {
+  color: #333;
+}
+
+.panel {
+    background-color: white;
+    border: 1px solid #ddd;
+    padding: 1em;
+    overflow: hidden;
+}
+
+#left {
+    float: left;
+    margin-right: 1em;
+    width: 30%;
+}
+
+#metabolites > table {
+    background-color: white;
+    border: 1px solid #ddd;
+    width: 100%;
+}
+
+#graph {
+    height: 600px;
+}
+
+
+/* D3 */
+.nodes rect {
+    color: #333;
+    fill: #333;
+}
+
+.link {
+  fill: none;
+  stroke: darkgrey;
+  stroke-width: 2px;
+}
