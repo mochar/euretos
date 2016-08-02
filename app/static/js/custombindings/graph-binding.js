@@ -44,7 +44,8 @@ ko.bindingHandlers.graph = {
         var width = $(element).width(),
             height = d3.max([600, $(element).height()]),
             svg = d3.select(element).select('svg'),
-            defs = svg.select('defs');
+            defs = svg.select('defs'),
+            nodeHeight = 20;
             
         var simulation = d3.forceSimulation()
             .force('link', d3.forceLink().id(function(d) { return d.id; }))
@@ -57,25 +58,44 @@ ko.bindingHandlers.graph = {
             .attr('class', 'link');
             // .attr('marker-end', function(d) { return 'url(#licensing)'; });
         
-        var node = svg.select('g.nodes').selectAll('rect')
+        var node = svg.select('g.nodes').selectAll('.node')
           .data(concepts.filter(function(d) { return d.id; }))
-          .enter().append('rect')
-            .attr('width', 45)
-            .attr('height', 20)
+          .enter().append('g')
+            .attr('class', 'node')
             .call(d3.drag()
                 .on('start', dragstarted)
                 .on('drag', dragged)
                 .on('end', dragended));
+            
+        node.append('text')
+            .text(function(d) { return d.name; })
+            .attr('dy', '.35em');
+          
+        node.append('rect')
+            .attr('width',  function(d) { 
+                var width = this.parentNode.getBBox().width + 5;
+                d.width = width;
+                return width; 
+            })
+            .attr('height', nodeHeight);
+            
+        node.selectAll('text').remove()
+        node.append('text')
+            .text(function(d) { return d.name; })
+            .attr('x', 3)
+            .attr('y', nodeHeight / 2)
+            .attr('dy', '.35em');
                 
-        node.append('title').text(function(d) { return d.name; })
         simulation.nodes(concepts).on('tick', ticked);
         simulation.force('link').links(predicates);
         
         function ticked() {
             link.attr('d', function(d) {
-                return 'M' + d[0].x + ',' + d[0].y
+                var midX = d[0].width / 2,
+                    midY = nodeHeight / 2;
+                return 'M' + (d[0].x + midX) + ',' + (d[0].y + midY)
                      + 'S' + d[1].x + ',' + d[1].y
-                     + ' ' + d[2].x + ',' + d[2].y;
+                     + ' ' + (d[2].x + midX) + ',' + (d[2].y + midY);
             });
             node.attr('transform', function(d) {
                 return 'translate(' + d.x + ',' + d.y + ')';

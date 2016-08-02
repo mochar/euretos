@@ -41,6 +41,11 @@ strong {
     fill: #333;
 }
 
+.nodes text {
+    color: white;
+    fill: white;
+}
+
 .link {
   fill: none;
   stroke: darkgrey;
