@@ -5,6 +5,10 @@ function ViewModel() {
     self.predicates = ko.observableArray([]);
     self.selectedConcepts = ko.observableArray([]);
     
+    self.chebi_url = 'https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI:';
+    
+    self.publicationCount = ko.observable(1);
+    
     self.reset = function() {
         self.concepts([]);
         self.predicates([]);

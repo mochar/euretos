@@ -1,19 +1,28 @@
 body {
     background-color: #eee;
     font-size: .8em;
-    font-family: "Helvetica", "Arial", sans-serif;
+    font-family: "Lato", "Helvetica", "Arial", sans-serif;
     color: #444;
 }
 
 h1,
-h2,
-strong {
+h2 {
   color: #333;
+}
+
+strong {
+    color: #555;
 }
 
 textarea {
     border: 1px solid #ddd;
     max-width: 100%;
+}
+
+table {
+    background-color: white;
+    border: 1px solid #ddd;
+    width: 100%;
 }
 
 .panel {
@@ -29,10 +38,12 @@ textarea {
     width: 30%;
 }
 
-#metabolites > table {
-    background-color: white;
-    border: 1px solid #ddd;
-    width: 100%;
+#parameters {
+    padding: .5em;
+}
+
+.parameter {
+    margin-right: .3em;
 }
 
 #graph {

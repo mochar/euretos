@@ -26,14 +26,18 @@
                 <tr>
                     <th><input type="checkbox" /></th>
                     <th>Metabolite</th>
-                    <th>ID</th>
+                    <th>CHEBI</th>
                 </tr>
             </thead>
             <tbody data-bind="foreach: concepts">
                 <tr>
                     <td><input type="checkbox" /></td>
                     <td data-bind="text: name"></td>
-                    <td data-bind="text: chebi_id"></td>
+                    <td>
+                        <a data-bind="text: chebi_id,
+                                    attr: {href: $root.chebi_url + chebi_id}">
+                        </a>
+                    </td>
                 </tr>
             </tbody>
         </table>
@@ -44,8 +48,18 @@
     <!-- /ko -->
 </div>
 
-<div id="parameters">
-    Score <input type="range" />
+<div class="panel" id="parameters">
+    <div class="parameter" style="float: left">
+        <strong>Min. # publications</strong> 
+        <input type="range" min="1" max="100"
+            data-bind="value: publicationCount" />
+        <span data-bind="text: publicationCount"></span>/100
+    </div>
+    
+    <div class="parameter" style="float: right">
+        <strong>Predicates</strong> 
+        <input type="text" />
+    </div>
 </div>
 
 <div class="panel" id="graph">
