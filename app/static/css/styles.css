@@ -25,17 +25,32 @@ table {
     width: 100%;
 }
 
+td,
+th {
+    padding: .3em;
+}
+
+/* PURE CSS */
+.pure-g > div {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+/* CUSTOM */
 .panel {
     background-color: white;
     border: 1px solid #ddd;
     padding: 1em;
-    overflow: hidden;
 }
 
 #left {
-    float: left;
-    margin-right: 1em;
-    width: 30%;
+    padding: .6em;
+    padding-top: .5em;
+}
+
+#right {
+    padding-top: .5em;
 }
 
 #parameters {

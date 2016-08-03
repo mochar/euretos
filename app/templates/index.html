@@ -2,68 +2,73 @@
 
 {% block body %}
 
-<div id="left">
-    <div data-bind="visible: concepts().length === 0">
-        <h3>Metabolites</h3>
-        <form data-bind="submit: getConcepts">
-            <textarea rows="15" name="metabolites" style="width: 100%"></textarea>
-            <button class="button" type="submit">Submit</button>
-        </form>
+<div class="pure-g">
+    <div class="pure-u-1-3" id="left">
+        <div data-bind="visible: concepts().length === 0">
+            <h3>Metabolites</h3>
+            <form data-bind="submit: getConcepts">
+                <textarea rows="15" name="metabolites" style="width: 100%"></textarea>
+                <button class="button" type="submit">Submit</button>
+            </form>
+        </div>
+        
+        <!-- ko if: concepts().length > 0 -->
+        <div id="metabolites">
+            <table>
+                <thead>
+                    <tr>
+                        <th><input type="checkbox" /></th>
+                        <th>Metabolite</th>
+                        <th>CHEBI</th>
+                    </tr>
+                </thead>
+                <tbody data-bind="foreach: concepts">
+                    <tr>
+                        <td><input type="checkbox" /></td>
+                        <td data-bind="text: name"></td>
+                        <td>
+                            <a data-bind="text: chebi_id,
+                                        attr: {href: $root.chebi_url + chebi_id}">
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <button class="button" data-bind="click: reset">
+                <span class="fa fa-arrow-left"></span> Back
+            </button>
+        </div>
+        <!-- /ko -->
     </div>
 
-    <!--<div class="panel">
-        <ul>
-            <li>
-                <span class="fa fa-long-arrow-right fa-2x"></span>
-            </li>
-        </ul>
-    </div>-->
-    
-    <!-- ko if: concepts().length > 0 -->
-    <div id="metabolites">
-        <table>
-            <thead>
-                <tr>
-                    <th><input type="checkbox" /></th>
-                    <th>Metabolite</th>
-                    <th>CHEBI</th>
-                </tr>
-            </thead>
-            <tbody data-bind="foreach: concepts">
-                <tr>
-                    <td><input type="checkbox" /></td>
-                    <td data-bind="text: name"></td>
-                    <td>
-                        <a data-bind="text: chebi_id,
-                                    attr: {href: $root.chebi_url + chebi_id}">
-                        </a>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <button class="button" data-bind="click: reset">
-            <span class="fa fa-arrow-left"></span> Back
-        </button>
-    </div>
-    <!-- /ko -->
-</div>
+    <div class="pure-u-2-3" id="right">
+        <div class="panel" id="parameters">
+            <div class="pure-g">
+                <div class="pure-u-1-3">
+                    <div class="parameter" style="float: left">
+                        <strong>Min. # publications</strong> 
+                        <input type="range" min="1" max="100"
+                            data-bind="value: publicationCount" />
+                        <span data-bind="text: publicationCount"></span>/100
+                    </div>
+                </div>
+                
+                <div class="pure-u-1-3">
+                </div>
+                
+                <div class="pure-u-1-3">
+                    <div class="parameter">
+                        <strong>Predicates</strong> 
+                        <input type="text" />
+                    </div>
+                </div>
+            </div>
+        </div>
 
-<div class="panel" id="parameters">
-    <div class="parameter" style="float: left">
-        <strong>Min. # publications</strong> 
-        <input type="range" min="1" max="100"
-            data-bind="value: publicationCount" />
-        <span data-bind="text: publicationCount"></span>/100
+        <div class="panel" id="graph">
+            <div data-bind="graph: true"></div>
+        </div>
     </div>
-    
-    <div class="parameter" style="float: right">
-        <strong>Predicates</strong> 
-        <input type="text" />
-    </div>
-</div>
-
-<div class="panel" id="graph">
-    <div data-bind="graph: true"></div>
 </div>
 
 {% endblock %}
