@@ -25,12 +25,10 @@ ko.bindingHandlers.graph = {
     },
     update: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
         console.log('update');
-        var concepts = bindingContext.$root.concepts(),
+        var concepts = bindingContext.$root.concepts.peek(),
             conceptsById = d3.map(concepts, function(d) { return d.id; }),
             predicates = bindingContext.$root.predicates(),
             bilinks = []; //https://bl.ocks.org/mbostock/4600693
-            
-        if (concepts.length == 0 || predicates.length == 0) return;
             
         predicates.forEach(function(predicate) {
             var s = predicate.source = conceptsById.get(predicate.source),
@@ -53,15 +51,20 @@ ko.bindingHandlers.graph = {
             .force('center', d3.forceCenter(width / 2, height / 2));
         
         var link = svg.select('g.links').selectAll('.link')
-          .data(bilinks)
-          .enter().append('path')
+          .data(bilinks);
+        link.exit().remove();
+        link = link.enter().append('path')
             .attr('class', 'link');
             // .attr('marker-end', function(d) { return 'url(#licensing)'; });
         
         var node = svg.select('g.nodes').selectAll('.node')
-          .data(concepts.filter(function(d) { return d.id; }))
-          .enter().append('g')
+          .data(concepts.filter(function(d) { return d.id; }));
+        node.exit().remove();
+        node = node.enter().append('g')
             .attr('class', 'node')
+            .on('click', function(d, i) {
+                console.log(d);
+            })
             .call(d3.drag()
                 .on('start', dragstarted)
                 .on('drag', dragged)

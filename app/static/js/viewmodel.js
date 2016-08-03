@@ -3,6 +3,13 @@ function ViewModel() {
     var self = this;
     self.concepts = ko.observableArray([]);
     self.predicates = ko.observableArray([]);
+    self.selectedConcepts = ko.observableArray([]);
+    
+    self.reset = function() {
+        self.concepts([]);
+        self.predicates([]);
+        self.selectedConcepts([]);
+    }
     
     self.getConcepts = function(formElement) {
         var formData = new FormData(formElement);

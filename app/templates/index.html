@@ -7,7 +7,7 @@
         <h3>Metabolites</h3>
         <form data-bind="submit: getConcepts">
             <textarea rows="15" name="metabolites" style="width: 100%"></textarea>
-            <button type="submit">Submit</button>
+            <button class="button" type="submit">Submit</button>
         </form>
     </div>
 
@@ -37,6 +37,9 @@
                 </tr>
             </tbody>
         </table>
+        <button class="button" data-bind="click: reset">
+            <span class="fa fa-arrow-left"></span> Back
+        </button>
     </div>
     <!-- /ko -->
 </div>
@@ -48,6 +51,5 @@
 <div class="panel" id="graph">
     <div data-bind="graph: true"></div>
 </div>
-
 
 {% endblock %}
