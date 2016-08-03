@@ -11,6 +11,11 @@ strong {
   color: #333;
 }
 
+textarea {
+    border: 1px solid #ddd;
+    max-width: 100%;
+}
+
 .panel {
     background-color: white;
     border: 1px solid #ddd;
@@ -34,6 +39,12 @@ strong {
     height: 600px;
 }
 
+.button {
+    padding: .5em 1em;
+    background-color: white;
+    border: 1px solid #ddd;
+    color: #333;
+}
 
 /* D3 */
 .nodes rect {
