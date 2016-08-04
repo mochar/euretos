@@ -4,7 +4,8 @@ ko.bindingHandlers.graph = {
             height = d3.max([600, $(element).height()]),
             svg = d3.select(element).append('svg')
                 .attr('width', width)
-                .attr('height', height);
+                .attr('height', height),
+            g = svg.append('g');
         
         // Markers (arrow-head) per predicate-type
         svg.append('defs').selectAll('marker')
@@ -20,8 +21,17 @@ ko.bindingHandlers.graph = {
           .append('path')
             .attr('d', 'M0,-5L10,0L0,5');
             
-        svg.append('g').attr('class', 'links');
-        svg.append('g').attr('class', 'nodes');
+        g.append('g').attr('class', 'links');
+        g.append('g').attr('class', 'nodes');
+            
+        svg.call(d3.zoom()
+            .scaleExtent([1 / 2, 8])
+            .translateExtent([[0-width, 0-height], [width+width, height+height]])
+            .on('zoom', zoomed));
+        
+        function zoomed() {
+            g.attr('transform', d3.event.transform);
+        }
     },
     update: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
         console.log('update');
@@ -43,6 +53,7 @@ ko.bindingHandlers.graph = {
             height = d3.max([600, $(element).height()]),
             svg = d3.select(element).select('svg'),
             defs = svg.select('defs'),
+            g = svg.select('g'),
             nodeHeight = 20;
             
         var simulation = d3.forceSimulation()
@@ -50,7 +61,7 @@ ko.bindingHandlers.graph = {
             .force('charge', d3.forceManyBody().strength(-40))
             .force('center', d3.forceCenter(width / 2, height / 2));
         
-        var link = svg.select('g.links').selectAll('.link')
+        var link = g.select('g.links').selectAll('.link')
           .data(bilinks);
         link.exit().remove();
         link = link.enter().append('path')
@@ -58,7 +69,7 @@ ko.bindingHandlers.graph = {
             .attr('stroke', function(d, i) { return predicates[i].color; });
             // .attr('marker-end', function(d) { return 'url(#licensing)'; });
         
-        var node = svg.select('g.nodes').selectAll('.node')
+        var node = g.select('g.nodes').selectAll('.node')
           .data(concepts.filter(function(d) { return d.id; }));
         node.exit().remove();
         node = node.enter().append('g')
