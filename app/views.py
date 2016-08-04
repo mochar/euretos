@@ -2,7 +2,10 @@ import uuid
 
 from flask import session, render_template, request, jsonify
 
-from app import app, euretos
+from app import app, euretos, randomcolor
+
+
+random_color = randomcolor.RandomColor()
 
 
 @app.route('/concepts', methods=['GET', 'POST'])
@@ -15,7 +18,14 @@ def concepts():
 @app.route('/predicates', methods=['GET', 'POST'])
 def predicates():
     triples = euretos.find_triples(request.json['concepts'])
-    return jsonify({'predicates': triples})
+    all_predicates = {}
+    for triple in triples:
+        if all_predicates.get(triple['id']) is None:
+            t = {'name': triple['name'], 'id': triple['id'],
+                'color': random_color.generate()[0]}
+            all_predicates[t['id']] = t
+    return jsonify({'predicates': triples, 
+        'all': list(all_predicates.values())})
     
 
 @app.route('/')
