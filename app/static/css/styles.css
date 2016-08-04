@@ -103,6 +103,7 @@ a:visited {
 .nodes rect {
     color: #333;
     fill: #333;
+    stroke: white;
 }
 
 .nodes text {

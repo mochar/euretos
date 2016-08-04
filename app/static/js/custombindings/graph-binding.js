@@ -106,11 +106,29 @@ ko.bindingHandlers.graph = {
         
         function ticked() {
             link.attr('d', function(d) {
-                var midX = d[0].width / 2,
-                    midY = nodeHeight / 2;
-                return 'M' + (d[0].x + midX) + ',' + (d[0].y + midY)
+                // var midX = d[0].width / 2,
+                //     midY = nodeHeight / 2;
+                // return 'M' + (d[0].x + midX) + ',' + (d[0].y + midY)
+                //      + 'S' + d[1].x + ',' + d[1].y
+                //      + ' ' + (d[2].x + midX) + ',' + (d[2].y + midY);
+                var sourceX = d[0].x + (d[0].width / 2),
+                    sourceY = d[0].y + (nodeHeight / 2),
+                    targetX = d[2].x + (d[2].width / 2),
+                    targetY = d[2].y + (nodeHeight / 2);
+                var deltaX = targetX - sourceX,
+                    deltaY = targetY - sourceY,
+                    dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY),
+                    normX = deltaX / dist,
+                    normY = deltaY / dist,
+                    sourcePadding = d.left ? 17 : 12,
+                    targetPadding = d.right ? 17 : 12,
+                    sourceX = sourceX + (sourcePadding * normX),
+                    sourceY = sourceY + (sourcePadding * normY),
+                    targetX = targetX - (targetPadding * normX),
+                    targetY = targetY - (targetPadding * normY);
+                return 'M' + sourceX + ',' + sourceY
                      + 'S' + d[1].x + ',' + d[1].y
-                     + ' ' + (d[2].x + midX) + ',' + (d[2].y + midY);
+                     + ' ' + targetX + ',' + targetY;
             });
             node.attr('transform', function(d) {
                 return 'translate(' + d.x + ',' + d.y + ')';
