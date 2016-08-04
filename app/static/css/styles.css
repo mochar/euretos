@@ -30,8 +30,13 @@ th {
     padding: .3em;
 }
 
-a {
+a:link {
   color: #e81c4f;
+  text-decoration: none;
+}
+
+a:visited {
+    color: #67041d;
 }
 
 /* PURE CSS */
@@ -107,6 +112,6 @@ a {
 
 .link {
   fill: none;
-  stroke: darkgrey;
+  /*stroke: darkgrey;*/
   stroke-width: 2px;
 }

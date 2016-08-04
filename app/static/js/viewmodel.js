@@ -55,13 +55,11 @@ function ViewModel() {
     
     $('#predicates-filter').multipleSelect({
         filter: true,
-        selectAll: false,
         placeholder: 'Predicates',
         styler: function(value) {
             var predicates = self.allPredicates();
             for(var i=0; i<predicates.length; i++) {
                 if (predicates[i].id == value)
-                    // return 'background-color: ' + predicates[i].color + ';';
                     return 'border-left: 5px solid ' + predicates[i].color + ';';
             }
         }

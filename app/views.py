@@ -24,6 +24,9 @@ def predicates():
             t = {'name': triple['name'], 'id': triple['id'],
                 'color': random_color.generate()[0]}
             all_predicates[t['id']] = t
+            triple['color'] = t['color']
+        else:
+            triple['color'] = all_predicates[triple['id']]['color']
     return jsonify({'predicates': triples, 
         'all': list(all_predicates.values())})
     

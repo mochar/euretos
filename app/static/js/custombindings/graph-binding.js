@@ -54,7 +54,8 @@ ko.bindingHandlers.graph = {
           .data(bilinks);
         link.exit().remove();
         link = link.enter().append('path')
-            .attr('class', 'link');
+            .attr('class', 'link')
+            .attr('stroke', function(d, i) { return predicates[i].color; });
             // .attr('marker-end', function(d) { return 'url(#licensing)'; });
         
         var node = svg.select('g.nodes').selectAll('.node')
