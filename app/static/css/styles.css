@@ -90,6 +90,15 @@ a:visited {
     color: #333;
 }
 
+#metabolites > table > tbody > tr {
+    cursor: pointer;
+}
+
+#metabolites > table > tbody > tr:hover {
+    border: 1px solid darkgrey;
+    background-color: #ddd;
+}
+
 /* D3 */
 .nodes {
     cursor: default;

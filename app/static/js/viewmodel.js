@@ -17,6 +17,11 @@ function ViewModel() {
         self.allPredicates([]);
     }
     
+    self.selectConcept = function() {
+        console.log(this);
+        console.log(arguments);
+    }
+    
     self.getConcepts = function(formElement) {
         var formData = new FormData(formElement);
         $.ajax({

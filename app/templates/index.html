@@ -23,7 +23,7 @@
                     </tr>
                 </thead>
                 <tbody data-bind="foreach: concepts">
-                    <tr>
+                    <tr data-bind="click: $root.selectConcept">
                         <td><input type="checkbox" /></td>
                         <td data-bind="text: name"></td>
                         <td>
