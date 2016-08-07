@@ -10,7 +10,10 @@ function ViewModel() {
     
     self.publicationCount = ko.observable(1);
     self.publicationMax = ko.observable(100);
-    self.graphDirty = ko.observable(false);
+    self.toggled = ko.observable(false);
+    self.oneColor = ko.observable(false);
+    self.sameWidth = ko.observable(false);
+    self.graphDirty = ko.observable(false); // Set to true to update graph
     
     self.reset = function() {
         self.concepts([]);
@@ -29,6 +32,8 @@ function ViewModel() {
     ko.computed(function() {
         self.publicationCount();
         self.publicationMax();
+        self.oneColor();
+        self.sameWidth();
         self.graphDirty(true);
     });
     

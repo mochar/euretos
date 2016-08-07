@@ -103,6 +103,14 @@ a:visited {
     background-color: #ddd;
 }
 
+.extra-toggle {
+    margin-right: 1em;
+}
+
+#settings {
+    padding: .5em;
+}
+
 /* D3 */
 .nodes {
     cursor: default;

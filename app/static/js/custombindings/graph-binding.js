@@ -42,7 +42,9 @@ ko.bindingHandlers.graph = {
             conceptsById = d3.map(concepts, function(d) { return d.id; });
             
         var publicationCount = bindingContext.$root.publicationCount(),
-            publicationMax = bindingContext.$root.publicationMax();
+            publicationMax = bindingContext.$root.publicationMax(),
+            oneColor = bindingContext.$root.oneColor(),
+            sameWidth = bindingContext.$root.sameWidth();
             
         var allPredicates = bindingContext.$root.allPredicates.peek(),
             allPredicatesById = d3.map(allPredicates, function(d) { return d.id; }),
@@ -96,8 +98,12 @@ ko.bindingHandlers.graph = {
         link.exit().remove();
         link = link.enter().append('path')
             .attr('class', 'link')
-            .attr('stroke-width', function(d) { return linkWidth(d[3].publicationCount); })
-            .attr('stroke', function(d, i) { return d[3].color; });
+            .attr('stroke-width', function(d) { 
+                return sameWidth ? 2 : linkWidth(d[3].publicationCount); 
+            })
+            .attr('stroke', function(d, i) { 
+                return oneColor ? 'darkgrey' : d[3].color; 
+            });
             // .attr('marker-end', function(d) { return 'url(#licensing)'; });
             
         var node = g.select('g.nodes').selectAll('.node')
