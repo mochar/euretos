@@ -9,6 +9,7 @@ function ViewModel() {
     self.chebi_url = 'https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI:';
     
     self.publicationCount = ko.observable(1);
+    self.publicationMax = ko.observable(100);
     self.graphDirty = ko.observable(false);
     
     self.reset = function() {
@@ -22,6 +23,14 @@ function ViewModel() {
         console.log(this);
         console.log(arguments);
     }
+    
+    // This computed is here to detect changes to observables
+    // that need to update the graph.
+    ko.computed(function() {
+        self.publicationCount();
+        self.publicationMax();
+        self.graphDirty(true);
+    });
     
     self.getConcepts = function(formElement) {
         var formData = new FormData(formElement);
@@ -52,6 +61,7 @@ function ViewModel() {
             success: function (data) {
                 console.log(data);
                 console.log('----------------------\n');
+                self.publicationMax(d3.max(data.predicates, function(p) { return p.publicationCount; }))
                 self.predicates(data.predicates);
                 self.allPredicates(data.all.map(function(predicate) {
                     predicate.show = true;

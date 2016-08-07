@@ -39,12 +39,19 @@ ko.bindingHandlers.graph = {
         
         var concepts = bindingContext.$root.concepts.peek(),
             concepts = $.extend(true, [], concepts), // deep-copy 
-            conceptsById = d3.map(concepts, function(d) { return d.id; }),
+            conceptsById = d3.map(concepts, function(d) { return d.id; });
+            
+        var publicationCount = bindingContext.$root.publicationCount(),
+            publicationMax = bindingContext.$root.publicationMax();
+            
+        var allPredicates = bindingContext.$root.allPredicates.peek(),
+            allPredicatesById = d3.map(allPredicates, function(d) { return d.id; }),
             predicates = bindingContext.$root.predicates.peek(),
             predicates = $.extend(true, [], predicates), // deep-copy
-            allPredicates = bindingContext.$root.allPredicates.peek(),
-            allPredicatesById = d3.map(allPredicates, function(d) { return d.id; }),
-            predicates = predicates.filter(function(p) { return allPredicatesById.get(p.id).show; })
+            predicates = predicates.filter(function(p) { 
+                return allPredicatesById.get(p.id).show && 
+                       p.publicationCount >= publicationCount;
+            })
             bilinks = []; //https://bl.ocks.org/mbostock/4600693
         
         // Intermediate nodes will have a negative id to discriminate them from
@@ -72,7 +79,7 @@ ko.bindingHandlers.graph = {
             g = svg.select('g'),
             nodeHeight = 20,
             linkWidth = d3.scaleLog()
-                .domain([1, 100])
+                .domain([1, publicationMax])
                 .range([2, 10]);
         
         // Empty previous elements to start fresh.
