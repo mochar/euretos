@@ -13,6 +13,8 @@
         </div>
         
         <!-- ko if: concepts().length > 0 -->
+        <button class="button" data-bind="click: function() { graphDirty(true); }">Update</button>
+
         <div id="metabolites">
             <table>
                 <thead>
@@ -63,7 +65,7 @@
         </div>
 
         <div class="panel" id="graph">
-            <div data-bind="graph: true"></div>
+            <div data-bind="graph: graphDirty"></div>
         </div>
     </div>
 </div>

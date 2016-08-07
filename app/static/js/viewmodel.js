@@ -9,6 +9,7 @@ function ViewModel() {
     self.chebi_url = 'https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI:';
     
     self.publicationCount = ko.observable(1);
+    self.graphDirty = ko.observable(false);
     
     self.reset = function() {
         self.concepts([]);
@@ -50,9 +51,14 @@ function ViewModel() {
             contentType: 'application/json; charset=utf-8',
             success: function (data) {
                 console.log(data);
+                console.log('----------------------\n');
                 self.predicates(data.predicates);
-                self.allPredicates(data.all);
+                self.allPredicates(data.all.map(function(predicate) {
+                    predicate.show = ko.observable(true);
+                    return predicate;
+                }));
                 $('#predicates-filter').multipleSelect('refresh');
+                self.graphDirty(true);
             },
             data: JSON.stringify(data)
         });
@@ -67,6 +73,20 @@ function ViewModel() {
                 if (predicates[i].id == value)
                     return 'border-left: 5px solid ' + predicates[i].color + ';';
             }
+        },
+        onClick: function(view) {
+            self.allPredicates().forEach(function(predicate) {
+                if (predicate.id == view.value) predicate.show(false);
+            });
+            self.graphDirty(true);
+        },
+        onCheckAll: function() {
+            self.allPredicates().forEach(function(p) { p.show(true); });
+            self.graphDirty(true);
+        },
+        onUncheckAll: function() {
+            self.allPredicates().forEach(function(p) { p.show(true); });
+            self.graphDirty(true);
         }
     });
 }
