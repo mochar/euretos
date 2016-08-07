@@ -54,7 +54,7 @@ function ViewModel() {
                 console.log('----------------------\n');
                 self.predicates(data.predicates);
                 self.allPredicates(data.all.map(function(predicate) {
-                    predicate.show = ko.observable(true);
+                    predicate.show = true;
                     return predicate;
                 }));
                 $('#predicates-filter').multipleSelect('refresh');
@@ -76,16 +76,16 @@ function ViewModel() {
         },
         onClick: function(view) {
             self.allPredicates().forEach(function(predicate) {
-                if (predicate.id == view.value) predicate.show(false);
+                if (predicate.id == view.value) predicate.show = false;
             });
             self.graphDirty(true);
         },
         onCheckAll: function() {
-            self.allPredicates().forEach(function(p) { p.show(true); });
+            self.allPredicates().forEach(function(p) { p.show = true; });
             self.graphDirty(true);
         },
         onUncheckAll: function() {
-            self.allPredicates().forEach(function(p) { p.show(true); });
+            self.allPredicates().forEach(function(p) { p.show = true; });
             self.graphDirty(true);
         }
     });

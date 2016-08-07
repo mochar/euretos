@@ -44,7 +44,7 @@ ko.bindingHandlers.graph = {
             predicates = $.extend(true, [], predicates), // deep-copy
             allPredicates = bindingContext.$root.allPredicates.peek(),
             allPredicatesById = d3.map(allPredicates, function(d) { return d.id; }),
-            predicates = predicates.filter(function(p) { return allPredicatesById.get(p.id).show(); })
+            predicates = predicates.filter(function(p) { return allPredicatesById.get(p.id).show; })
             bilinks = []; //https://bl.ocks.org/mbostock/4600693
         
         // Intermediate nodes will have a negative id to discriminate them from
