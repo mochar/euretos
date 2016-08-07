@@ -70,7 +70,10 @@ ko.bindingHandlers.graph = {
             svg = d3.select(element).select('svg'),
             defs = svg.select('defs'),
             g = svg.select('g'),
-            nodeHeight = 20;
+            nodeHeight = 20,
+            linkWidth = d3.scaleLog()
+                .domain([1, 100])
+                .range([2, 10]);
         
         // Empty previous elements to start fresh.
         g.selectAll('g').selectAll('*').remove();
@@ -86,6 +89,7 @@ ko.bindingHandlers.graph = {
         link.exit().remove();
         link = link.enter().append('path')
             .attr('class', 'link')
+            .attr('stroke-width', function(d) { return linkWidth(d[3].publicationCount); })
             .attr('stroke', function(d, i) { return d[3].color; });
             // .attr('marker-end', function(d) { return 'url(#licensing)'; });
             
