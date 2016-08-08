@@ -13,6 +13,7 @@ function ViewModel() {
     self.toggled = ko.observable(false);
     self.oneColor = ko.observable(false);
     self.sameWidth = ko.observable(false);
+    self.lonelyConcepts = ko.observable(false);
     self.graphDirty = ko.observable(false); // Set to true to update graph
     
     self.reset = function() {
@@ -34,6 +35,7 @@ function ViewModel() {
         self.publicationMax();
         self.oneColor();
         self.sameWidth();
+        self.lonelyConcepts();
         self.graphDirty(true);
     });
     

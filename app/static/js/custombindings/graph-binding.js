@@ -36,15 +36,12 @@ ko.bindingHandlers.graph = {
         if (!dirty()) return;
         dirty(false);
         console.log('update');
-        
-        var concepts = bindingContext.$root.concepts.peek(),
-            concepts = $.extend(true, [], concepts), // deep-copy 
-            conceptsById = d3.map(concepts, function(d) { return d.id; });
             
         var publicationCount = bindingContext.$root.publicationCount(),
             publicationMax = bindingContext.$root.publicationMax(),
             oneColor = bindingContext.$root.oneColor(),
-            sameWidth = bindingContext.$root.sameWidth();
+            sameWidth = bindingContext.$root.sameWidth(),
+            lonelyConcepts = bindingContext.$root.lonelyConcepts();
             
         var allPredicates = bindingContext.$root.allPredicates.peek(),
             allPredicatesById = d3.map(allPredicates, function(d) { return d.id; }),
@@ -55,6 +52,19 @@ ko.bindingHandlers.graph = {
                        p.publicationCount >= publicationCount;
             })
             bilinks = []; //https://bl.ocks.org/mbostock/4600693
+        
+        var concepts = bindingContext.$root.concepts.peek(),
+            concepts = $.extend(true, [], concepts), // deep-copy 
+            conceptsById = d3.map(concepts, function(d) { return d.id; });
+        
+        // Filter concepts to only connected ones
+        var connectedConcepts = [];
+        predicates.forEach(function(predicate) {
+            connectedConcepts.push(predicate.source, predicate.target);
+        });
+        if (!lonelyConcepts) {
+            concepts = concepts.filter(function(c) { return connectedConcepts.indexOf(c.id) > -1; });
+        }
         
         // Intermediate nodes will have a negative id to discriminate them from
         // actual nodes.

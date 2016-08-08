@@ -13,7 +13,7 @@
         </div>
         
         <!-- ko if: concepts().length > 0 -->
-        <button class="button" data-bind="click: function() { graphDirty(true); }">Update</button>
+        <!--<button class="button" data-bind="click: function() { graphDirty(true); }">Update</button>-->
 
         <div id="metabolites">
             <table>
@@ -72,8 +72,9 @@
         </div>
         
         <div id="settings" class="panel" data-bind="visible: toggled">
-            <input type="checkbox" data-bind="checked: oneColor"> One color
-            <input type="checkbox" data-bind="checked: sameWidth"> Link width
+            <label><input type="checkbox" data-bind="checked: oneColor"> One color</label>
+            <label><input type="checkbox" data-bind="checked: sameWidth"> Scale link width to publication count</label>
+            <label><input type="checkbox" data-bind="checked: lonelyConcepts"> Show concepts with no connections</label>
         </div>
 
         <div class="panel" id="graph">
