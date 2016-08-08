@@ -26,6 +26,7 @@ function ViewModel() {
     self.selectConcept = function() {
         console.log(this);
         console.log(arguments);
+        return true;
     }
     
     // This computed is here to detect changes to observables

@@ -21,6 +21,7 @@
                     <tr>
                         <th><input type="checkbox" /></th>
                         <th>Metabolite</th>
+                        <th>Euretos</th>
                         <th>CHEBI</th>
                     </tr>
                 </thead>
@@ -28,6 +29,7 @@
                     <tr data-bind="click: $root.selectConcept">
                         <td><input type="checkbox" /></td>
                         <td data-bind="text: name"></td>
+                        <td data-bind="text: id"></td>
                         <td>
                             <a data-bind="text: chebi_id,
                                         attr: {href: $root.chebi_url + chebi_id}">

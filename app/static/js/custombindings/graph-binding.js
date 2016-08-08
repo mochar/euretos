@@ -90,7 +90,7 @@ ko.bindingHandlers.graph = {
             defs = svg.select('defs'),
             g = svg.select('g'),
             nodeHeight = 20,
-            linkWidth = d3.scaleLinear()
+            linkWidth = d3.scaleLog()
                 .domain([1, publicationMax])
                 .range([2, 10]);
         
