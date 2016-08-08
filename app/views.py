@@ -19,10 +19,11 @@ def concepts():
 def predicates():
     triples = euretos.find_triples(request.json['concepts'])
     all_predicates = {}
-    for triple in triples:
+    colors = random_color.generate(count=len(triples))
+    for i, triple in enumerate(triples):
         if all_predicates.get(triple['id']) is None:
             t = {'name': triple['name'], 'id': triple['id'],
-                'color': random_color.generate()[0]}
+                 'color': colors[i]}
             all_predicates[t['id']] = t
             triple['color'] = t['color']
         else:
