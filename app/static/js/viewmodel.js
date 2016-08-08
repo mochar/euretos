@@ -2,7 +2,6 @@
 function ViewModel() {
     var self = this;
     self.concepts = ko.observableArray([]);
-    self.selectedConcepts = ko.observableArray([]);
     self.predicates = ko.observableArray([]);
     self.allPredicates = ko.observableArray([]);
     
@@ -18,14 +17,12 @@ function ViewModel() {
     
     self.reset = function() {
         self.concepts([]);
-        self.selectedConcepts([]);
         self.predicates([]);
         self.allPredicates([]);
     }
     
-    self.selectConcept = function() {
-        console.log(this);
-        console.log(arguments);
+    self.collapseConcept = function(concept) {
+        concept.collapsed(!concept.collapsed());
         return true;
     }
     
@@ -49,7 +46,11 @@ function ViewModel() {
             async: true,
             success: function(data, textStatus, jqXHR) {
                 console.log(data);
-                self.concepts(data.concepts);
+                self.concepts(data.concepts.map(function(concept) {
+                    concept.collapsed = ko.observable(false);
+                    concept.show = ko.observable(true);
+                    return concept;
+                }));
                 formElement.reset();
                 self.getPredicates();
             },

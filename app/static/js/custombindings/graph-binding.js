@@ -42,6 +42,11 @@ ko.bindingHandlers.graph = {
             oneColor = bindingContext.$root.oneColor(),
             sameWidth = bindingContext.$root.sameWidth(),
             lonelyConcepts = bindingContext.$root.lonelyConcepts();
+        
+        var concepts = bindingContext.$root.concepts.peek(),
+            concepts = $.extend(true, [], concepts), // deep-copy 
+            concepts = concepts.filter(function(c) { return c.show(); });
+            conceptsById = d3.map(concepts, function(d) { return d.id; });
             
         var allPredicates = bindingContext.$root.allPredicates.peek(),
             allPredicatesById = d3.map(allPredicates, function(d) { return d.id; }),
@@ -49,13 +54,11 @@ ko.bindingHandlers.graph = {
             predicates = $.extend(true, [], predicates), // deep-copy
             predicates = predicates.filter(function(p) { 
                 return allPredicatesById.get(p.id).show && 
-                       p.publicationCount >= publicationCount;
+                       p.publicationCount >= publicationCount &&
+                       conceptsById.get(p.source) &&
+                       conceptsById.get(p.target);
             })
             bilinks = []; //https://bl.ocks.org/mbostock/4600693
-        
-        var concepts = bindingContext.$root.concepts.peek(),
-            concepts = $.extend(true, [], concepts), // deep-copy 
-            conceptsById = d3.map(concepts, function(d) { return d.id; });
         
         // Filter concepts to only connected ones
         var connectedConcepts = [];
