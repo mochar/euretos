@@ -90,9 +90,14 @@ function ViewModel() {
             }
         },
         onClick: function(view) {
-            self.allPredicates().forEach(function(predicate) {
-                if (predicate.id == view.value) predicate.show = false;
-            });
+            var selected = $('#predicates-filter').multipleSelect('getSelects');
+            if (selected.length === 0) {
+                self.allPredicates().forEach(function(p) { p.show = true; });
+            } else {
+                self.allPredicates().forEach(function(predicate) {
+                    predicate.show = selected.indexOf(predicate.id) > -1;
+                });
+            }
             self.graphDirty(true);
         },
         onCheckAll: function() {
