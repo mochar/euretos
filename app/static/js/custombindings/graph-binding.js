@@ -119,33 +119,6 @@ ko.bindingHandlers.graph = {
             })
             .attr('marker-end', function(d) { return 'url(#default)'; });
             
-        // A circle representing the intermediate node
-        var intermediate = g.select('g.nodes').selectAll('.intermediate')
-          .data(concepts.filter(function(d) { return d.id < 0; }))
-          .enter()
-          .append('circle')
-            .attr('class', 'intermediate')
-            .attr('r', 3);
-            
-        // A line from the intermediate node to the center of the target node
-        var line = g.selectAll('.line')
-          .data(bilinks)
-          .enter()
-          .append('line')
-            .attr('class', 'line')
-            .attr('stroke-width', 2)
-            .attr('stroke', 'darkgrey')
-            .attr('x1', function(b) { return b[1].x})
-            .attr('x2', function(b) { return b[2].x + (b[2].width / 2)})
-            .attr('y1', function(b) { return b[1].y})
-            .attr('y2', function(b) { return b[2].y + (nodeHeight / 2)});
-        
-        var angle = g.append('text')
-            .attr('text-anchor', 'end')
-            .attr('x', 300)
-            .attr('y', 10)
-            .attr('font-size', 12);
-            
         var node = g.select('g.nodes').selectAll('.node')
           .data(concepts.filter(function(d) { return d.id > 0; }));
         node.exit().remove();
@@ -202,8 +175,6 @@ ko.bindingHandlers.graph = {
                     degree = rad * (180 / Math.PI),
                     nodeRad = Math.atan((nodeHeight / 2) / (d[2].width / 2));
                     nodeDegree = nodeRad * (180 / Math.PI);
-                    
-                angle.text(degree);
                 
                 // Link ends at the upside or downside
                 if (Math.abs(degree) > nodeDegree) {
@@ -230,27 +201,11 @@ ko.bindingHandlers.graph = {
                 
                 return 'M' + (d[0].x + midX1) + ',' + (d[0].y + midY)
                      + 'S' + d[1].x + ',' + d[1].y
-                    //  + ' ' + x2 + ',' + y2;
                      + ' ' + newX2 + ',' + newY2;
-                     
-                // return 'M' + (d[0].x + midX1) + ',' + (d[0].y + midY)
-                //      + 'S' + d[1].x + ',' + d[1].y
-                //      + ' ' + (d[2].x + midX2) + ',' + (d[2].y + midY);
             });
             node.attr('transform', function(d) {
                 return 'translate(' + d.x + ',' + d.y + ')';
             });
-            intermediate.attr('transform', function(d) {
-                angle
-                    .attr('x', d.x - 3)
-                    .attr('y', d.y);
-                return 'translate(' + d.x + ',' + d.y + ')';
-            });
-            line
-                .attr('x1', function(b) { return b[1].x})
-                .attr('x2', function(b) { return b[2].x + (b[2].width / 2)})
-                .attr('y1', function(b) { return b[1].y})
-                .attr('y2', function(b) { return b[2].y + (nodeHeight / 2)});
         }
 
         function dragstarted(d) {
