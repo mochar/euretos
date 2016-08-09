@@ -9,7 +9,7 @@ ko.bindingHandlers.graph = {
         
         // Markers (arrow-head) per predicate-type
         svg.append('defs').selectAll('marker')
-            .data(['suit', 'licensing', 'resolved'])
+            .data(['default'])
           .enter().append('marker')
             .attr('id', function(d) { return d; })
             .attr('viewBox', '0 -5 10 10')
@@ -116,8 +116,8 @@ ko.bindingHandlers.graph = {
             })
             .attr('stroke', function(d, i) { 
                 return oneColor ? 'darkgrey' : d[3].color; 
-            });
-            // .attr('marker-end', function(d) { return 'url(#licensing)'; });
+            })
+            .attr('marker-end', function(d) { return 'url(#default)'; });
             
         // A circle representing the intermediate node
         var intermediate = g.select('g.nodes').selectAll('.intermediate')
@@ -199,22 +199,35 @@ ko.bindingHandlers.graph = {
                 var adjacent = x2 - x1, 
                     opposite = y2 - y1,
                     rad = Math.atan(opposite / adjacent),
-                    degree = Math.abs(rad * (180 / Math.PI)),
+                    degree = rad * (180 / Math.PI),
                     nodeRad = Math.atan((nodeHeight / 2) / (d[2].width / 2));
-                    nodeDegree = Math.abs(nodeRad * (180 / Math.PI));
+                    nodeDegree = nodeRad * (180 / Math.PI);
                     
                 angle.text(degree);
                 
-                if (y2 < y1) {
-                    var newX = (x2 - x1) * ((y1 - y2) / (nodeHeight / 2))
-                    if (x2 > x1) var newX2 = degree < nodeDegree ? d[2].x : x2
-                    else var newX2 = degree < nodeDegree ? d[2].x + d[2].width : x2;
-                    var newY = y2 + ((d[2].width / 2) * Math.tan(rad));
-                    var newY2 = degree < nodeDegree ? newY : d[2].y + nodeHeight;
-                } else {
-                    var newX2 = x2, newY2 = y2;
+                // Link ends at the upside or downside
+                if (Math.abs(degree) > nodeDegree) {
+                    if (y2 < y1) { // Downside
+                        var newY2 = d[2].y + nodeHeight;
+                        var distanceFromCenter = (x2 - x1) / ((y1 - y2) / (nodeHeight / 2));
+                        var newX2 = x2 - distanceFromCenter;
+                    } else { // Upside
+                        var newY2 = d[2].y;
+                        var distanceFromCenter = (x2 - x1) / ((y2 - y1) / (nodeHeight / 2));
+                        var newX2 = x2 - distanceFromCenter;
+                    }
+                } else { // Links ends at the sides
+                    if (x2 > x1) { // Left
+                        var newX2 = d[2].x;
+                        var distanceFromCenter = (y1 - y2) / ((x2 - x1) / (d[2].width / 2));
+                        var newY2 = y2 + distanceFromCenter;
+                    } else { // Right
+                        var newX2 = d[2].x + d[2].width;
+                        var distanceFromCenter = (y1 - y2) / ((x1 - x2) / (d[2].width / 2));
+                        var newY2 = y2 + distanceFromCenter;
+                    }
                 }
-
+                
                 return 'M' + (d[0].x + midX1) + ',' + (d[0].y + midY)
                      + 'S' + d[1].x + ',' + d[1].y
                     //  + ' ' + x2 + ',' + y2;
