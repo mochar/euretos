@@ -119,6 +119,33 @@ ko.bindingHandlers.graph = {
             });
             // .attr('marker-end', function(d) { return 'url(#licensing)'; });
             
+        // A circle representing the intermediate node
+        var intermediate = g.select('g.nodes').selectAll('.intermediate')
+          .data(concepts.filter(function(d) { return d.id < 0; }))
+          .enter()
+          .append('circle')
+            .attr('class', 'intermediate')
+            .attr('r', 3);
+            
+        // A line from the intermediate node to the center of the target node
+        var line = g.selectAll('.line')
+          .data(bilinks)
+          .enter()
+          .append('line')
+            .attr('class', 'line')
+            .attr('stroke-width', 2)
+            .attr('stroke', 'darkgrey')
+            .attr('x1', function(b) { return b[1].x})
+            .attr('x2', function(b) { return b[2].x + (b[2].width / 2)})
+            .attr('y1', function(b) { return b[1].y})
+            .attr('y2', function(b) { return b[2].y + (nodeHeight / 2)});
+        
+        var angle = g.append('text')
+            .attr('text-anchor', 'end')
+            .attr('x', 300)
+            .attr('y', 10)
+            .attr('font-size', 12);
+            
         var node = g.select('g.nodes').selectAll('.node')
           .data(concepts.filter(function(d) { return d.id > 0; }));
         node.exit().remove();
@@ -160,33 +187,57 @@ ko.bindingHandlers.graph = {
         
         function ticked() {
             link.attr('d', function(d) {
-                var midX = d[0].width / 2,
+                var midX1 = d[0].width / 2,
+                    midX2 = d[2].width / 2,
                     midY = nodeHeight / 2;
-                return 'M' + (d[0].x + midX) + ',' + (d[0].y + midY)
+                
+                var x1 = d[1].x,
+                    x2 = d[2].x + midX2,
+                    y1 = d[1].y,
+                    y2 = d[2].y + midY;
+                    
+                var adjacent = x2 - x1, 
+                    opposite = y2 - y1,
+                    rad = Math.atan(opposite / adjacent),
+                    degree = Math.abs(rad * (180 / Math.PI)),
+                    nodeRad = Math.atan((nodeHeight / 2) / (d[2].width / 2));
+                    nodeDegree = Math.abs(nodeRad * (180 / Math.PI));
+                    
+                angle.text(degree);
+                
+                if (y2 < y1) {
+                    var newX = (x2 - x1) * ((y1 - y2) / (nodeHeight / 2))
+                    if (x2 > x1) var newX2 = degree < nodeDegree ? d[2].x : x2
+                    else var newX2 = degree < nodeDegree ? d[2].x + d[2].width : x2;
+                    var newY = y2 + ((d[2].width / 2) * Math.tan(rad));
+                    var newY2 = degree < nodeDegree ? newY : d[2].y + nodeHeight;
+                } else {
+                    var newX2 = x2, newY2 = y2;
+                }
+
+                return 'M' + (d[0].x + midX1) + ',' + (d[0].y + midY)
                      + 'S' + d[1].x + ',' + d[1].y
-                     + ' ' + (d[2].x + midX) + ',' + (d[2].y + midY);
-                // var sourceX = d[0].x + (d[0].width / 2),
-                //     sourceY = d[0].y + (nodeHeight / 2),
-                //     targetX = d[2].x + (d[2].width / 2),
-                //     targetY = d[2].y + (nodeHeight / 2);
-                // var deltaX = targetX - sourceX,
-                //     deltaY = targetY - sourceY,
-                //     dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY),
-                //     normX = deltaX / dist,
-                //     normY = deltaY / dist,
-                //     sourcePadding = d.left ? 17 : 12,
-                //     targetPadding = d.right ? 17 : 12,
-                //     sourceX = sourceX + (sourcePadding * normX),
-                //     sourceY = sourceY + (sourcePadding * normY),
-                //     targetX = targetX - (targetPadding * normX),
-                //     targetY = targetY - (targetPadding * normY);
-                // return 'M' + sourceX + ',' + sourceY
+                    //  + ' ' + x2 + ',' + y2;
+                     + ' ' + newX2 + ',' + newY2;
+                     
+                // return 'M' + (d[0].x + midX1) + ',' + (d[0].y + midY)
                 //      + 'S' + d[1].x + ',' + d[1].y
-                //      + ' ' + targetX + ',' + targetY;
+                //      + ' ' + (d[2].x + midX2) + ',' + (d[2].y + midY);
             });
             node.attr('transform', function(d) {
                 return 'translate(' + d.x + ',' + d.y + ')';
             });
+            intermediate.attr('transform', function(d) {
+                angle
+                    .attr('x', d.x - 3)
+                    .attr('y', d.y);
+                return 'translate(' + d.x + ',' + d.y + ')';
+            });
+            line
+                .attr('x1', function(b) { return b[1].x})
+                .attr('x2', function(b) { return b[2].x + (b[2].width / 2)})
+                .attr('y1', function(b) { return b[1].y})
+                .attr('y2', function(b) { return b[2].y + (nodeHeight / 2)});
         }
 
         function dragstarted(d) {

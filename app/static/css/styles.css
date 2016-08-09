@@ -127,9 +127,11 @@ a:visited {
 }
 
 .nodes rect {
-    color: #333;
-    fill: #333;
-    stroke: white;
+    /*color: #333;
+    fill: #333;*/
+    /*stroke: white;*/
+    stroke: black;
+    fill: rgba(255, 0, 0, 0);
 }
 
 .nodes text {
@@ -138,5 +140,9 @@ a:visited {
 }
 
 .link {
+  fill: none;
+}
+
+.line {
   fill: none;
 }
