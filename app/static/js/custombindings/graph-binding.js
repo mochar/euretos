@@ -102,6 +102,7 @@ ko.bindingHandlers.graph = {
             .attr('orient', 'auto')
           .append('path')
             .attr('fill', function(d) { return d.id ? d.color : 'darkgrey'; })
+            .attr('color', function(d) { return d.id ? d.color : 'darkgrey'; })
             .attr('d', 'M0,-5L10,0L0,5');
             
         // Link nodes are identified by d.id, so we don't have to add the nodes manually
