@@ -13,8 +13,7 @@ ko.bindingHandlers.graph = {
           .enter().append('marker')
             .attr('id', function(d) { return d; })
             .attr('viewBox', '0 -5 10 10')
-            .attr('refX', 15)
-            .attr('refY', -1.5)
+            .attr('refX', 6)
             .attr('markerWidth', 6)
             .attr('markerHeight', 6)
             .attr('orient', 'auto')
@@ -95,7 +94,7 @@ ko.bindingHandlers.graph = {
             nodeHeight = 20,
             linkWidth = d3.scaleLog()
                 .domain([1, publicationMax])
-                .range([2, 10]);
+                .range([2, 6]);
         
         // Empty previous elements to start fresh.
         g.selectAll('g').selectAll('*').remove();
