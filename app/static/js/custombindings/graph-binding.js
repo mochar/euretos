@@ -6,22 +6,12 @@ ko.bindingHandlers.graph = {
                 .attr('width', width)
                 .attr('height', height),
             g = svg.append('g');
-        
-        // Markers (arrow-head) per predicate-type
-        svg.append('defs').selectAll('marker')
-            .data(['default'])
-          .enter().append('marker')
-            .attr('id', function(d) { return d; })
-            .attr('viewBox', '0 -5 10 10')
-            .attr('refX', 6)
-            .attr('markerWidth', 6)
-            .attr('markerHeight', 6)
-            .attr('orient', 'auto')
-          .append('path')
-            .attr('d', 'M0,-5L10,0L0,5');
             
         g.append('g').attr('class', 'links');
         g.append('g').attr('class', 'nodes');
+        
+        // Markers 
+        svg.append('defs');
             
         svg.call(d3.zoom()
             .scaleExtent([1 / 2, 8])
@@ -98,6 +88,21 @@ ko.bindingHandlers.graph = {
         
         // Empty previous elements to start fresh.
         g.selectAll('g').selectAll('*').remove();
+        svg.select('defs').selectAll('marker').remove();
+        
+        // Markers (arrow-head) per predicate-type
+        svg.select('defs').selectAll('marker')
+            .data(allPredicates.concat(['marker-default']))
+          .enter().append('marker')
+            .attr('id', function(d) { return d.id ? 'marker-' + d.id : d; })
+            .attr('viewBox', '0 -5 10 10')
+            .attr('refX', 6)
+            .attr('markerWidth', 6)
+            .attr('markerHeight', 6)
+            .attr('orient', 'auto')
+          .append('path')
+            .attr('fill', function(d) { return d.id ? d.color : 'darkgrey'; })
+            .attr('d', 'M0,-5L10,0L0,5');
             
         // Link nodes are identified by d.id, so we don't have to add the nodes manually
         // to the link objects.
@@ -116,7 +121,10 @@ ko.bindingHandlers.graph = {
             .attr('stroke', function(d, i) { 
                 return oneColor ? 'darkgrey' : d[3].color; 
             })
-            .attr('marker-end', function(d) { return 'url(#default)'; });
+            .attr('marker-end', function(d) { 
+                var id = oneColor ? 'default' : d[3].id;
+                return 'url(#marker-' + id + ')'; 
+            });
             
         var node = g.select('g.nodes').selectAll('.node')
           .data(concepts.filter(function(d) { return d.id > 0; }));
