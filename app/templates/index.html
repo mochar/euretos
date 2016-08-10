@@ -58,11 +58,10 @@
                     </a>
                     
                     <strong>Min. # publications</strong> 
-                    <input type="range" min="1" 
+                    <input type="number" min="1" 
                         data-bind="value: publicationCount,
                                    attr: {'max': publicationMax }" />
                     <span>
-                        <span data-bind="text: publicationCount"></span>
                         /
                         <span data-bind="text: publicationMax"></span>
                     </span>
