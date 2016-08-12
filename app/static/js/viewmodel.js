@@ -5,8 +5,6 @@ function ViewModel() {
     self.predicates = ko.observableArray([]);
     self.allPredicates = ko.observableArray([]);
     
-    self.chebi_url = 'https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI:';
-    
     self.publicationCount = ko.observable(1);
     self.publicationMax = ko.observable(100);
     self.toggled = ko.observable(false);
@@ -14,6 +12,20 @@ function ViewModel() {
     self.sameWidth = ko.observable(false);
     self.lonelyConcepts = ko.observable(false);
     self.graphDirty = ko.observable(false); // Set to true to update graph
+    
+    self.dataType = ko.observable();
+    self.dataName = ko.observable('');
+    self.url = ko.observable('');
+    ko.computed(function() {
+        var dataType = self.dataType();
+        if (dataType === 'CHEBI') {
+            self.dataName('Metabolite')
+            self.url('https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI:');
+        } else if (dataType === 'Entrez') {
+            self.dataName('Gene');
+            self.url('http://www.ncbi.nlm.nih.gov/gene/?term=');
+        }
+    })
     
     self.reset = function() {
         self.concepts([]);

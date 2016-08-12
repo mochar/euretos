@@ -116,6 +116,14 @@ a:visited {
     margin-right: .5em;
 }
 
+#type-select {
+    width: 100%;
+    font-size: larger;
+    font-weight: bold;
+    color: #555;
+    margin-bottom: .3em;
+}
+
 /* D3 */
 .nodes {
     cursor: default;

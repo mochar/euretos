@@ -17,10 +17,10 @@ class Euretos:
         
     def _flatten_concepts(self, concepts):
         flattened_concepts = []
-        for chebi_id, cs in concepts.items():
+        for source_id, cs in concepts.items():
             # TODO
             flattened_concept = {'name': cs[0]['name'],
-                'chebi_id': chebi_id, 'id': cs[0]['id']}
+                'sourceId': source_id, 'id': cs[0]['id']}
             flattened_concepts.append(flattened_concept)
         return flattened_concepts
         
@@ -42,19 +42,26 @@ class Euretos:
         r = self.s.post(url, data=json.dumps(data))
         return r.json()
         
-    def chebis_to_concepts(self, chebis, flatten=True):
-        chebis = ['CHEBI:{}'.format(chebi) for chebi in chebis]
-        concepts = self.search_for_concepts(chebis)
+    def ids_to_concepts(self, ids, prefix, flatten):
+        concepts = self.search_for_concepts(ids)
         mapped_concepts = defaultdict(list)
         for concept in concepts:
             for synonym in concept['synonyms']:
-                if not synonym['name'].startswith('[chebi]'):
+                if not synonym['name'].startswith(prefix):
                     continue
-                _, chebi = synonym['name'].split('[chebi]')
+                _, id_ = synonym['name'].split(prefix)
                 del concept['synonyms']
-                mapped_concepts[chebi].append(concept)
+                mapped_concepts[id_].append(concept)
                 break
         return self._flatten_concepts(mapped_concepts) if flatten else mapped_concepts
+        
+    def chebis_to_concepts(self, chebis, flatten=True):
+        chebis = ['CHEBI:{}'.format(chebi) for chebi in chebis]
+        return self.ids_to_concepts(chebis, '[chebi]', flatten)
+        
+    def entrez_to_concepts(self, entrez_ids, flatten=True):
+        entrez_ids = ['[entrezgene]{}'.format(entrez) for entrez in entrez_ids]
+        return self.ids_to_concepts(entrez_ids, '[entrezgene]', flatten)
         
     def _find_triple_ids(self, concepts):
         url = self.base_url.format('/external/concept-to-concept/direct')
@@ -82,10 +89,8 @@ class Euretos:
             'ids': triple_ids
         }
         r = self.s.post(url, data=json.dumps(data))
-        # triples = defaultdict(list)
         triples = []
         for triple in r.json():
-            # triples[triple['predicateId']].append({
             triples.append({
                 'id': triple['predicateId'],
                 'name': triple['predicateName'],

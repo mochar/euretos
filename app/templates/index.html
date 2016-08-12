@@ -5,9 +5,13 @@
 <div class="pure-g">
     <div class="pure-u-1-3" id="left">
         <div data-bind="visible: concepts().length === 0">
-            <h3>Metabolites</h3>
             <form data-bind="submit: getConcepts">
-                <textarea rows="15" name="metabolites" style="width: 100%"></textarea>
+                <select class="button" id="type-select" name="type"
+                        data-bind="value: dataType">
+                    <option value="CHEBI">Metabolites (ChEBI)</option>
+                    <option value="Entrez">Genes (Entrez)</option>
+                </select>
+                <textarea rows="15" name="ids" style="width: 100%"></textarea>
                 <button class="button" type="submit">Submit</button>
             </form>
         </div>
@@ -20,9 +24,9 @@
                 <thead>
                     <tr>
                         <th><input type="checkbox" /></th>
-                        <th>Metabolite</th>
+                        <th data-bind="text: dataName"></th>
                         <th>Euretos</th>
-                        <th>CHEBI</th>
+                        <th data-bind="text: dataType">CHEBI</th>
                     </tr>
                 </thead>
                 <tbody data-bind="foreach: concepts">
@@ -35,8 +39,8 @@
                         <td data-bind="text: name"></td>
                         <td data-bind="text: id"></td>
                         <td>
-                            <a data-bind="text: chebi_id,
-                                          attr: {href: $root.chebi_url + chebi_id}">
+                            <a data-bind="text: sourceId,
+                                          attr: {href: $root.url() + sourceId}">
                             </a>
                         </td>
                     </tr>
