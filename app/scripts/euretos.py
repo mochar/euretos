@@ -31,16 +31,20 @@ class Euretos:
         print(r.json()['token'])
         self.s.headers.update({'x-token': r.json()['token']})
     
-    def search_for_concepts(self, terms):
+    def search_for_concepts(self, terms, chunk_size=150):
         url = self.base_url.format('/external/concepts/search')
-        query_string = ' OR '.join('term:\'{}\''.format(term) for term in terms)
-        data = {
-            'queryString': query_string,
-            'searchType': 'TOKEN',
-            'additionalFields': ['synonyms']
-        }
-        r = self.s.post(url, data=json.dumps(data))
-        return r.json()
+        concepts = []
+        for pos in range(0, len(terms), chunk_size):
+            chunk_terms = terms[pos:pos + chunk_size]
+            query_string = ' OR '.join('term:\'{}\''.format(term) for term in chunk_terms)
+            data = {
+                'queryString': query_string,
+                'searchType': 'TOKEN',
+                'additionalFields': ['synonyms']
+            }
+            r = self.s.post(url, data=json.dumps(data))
+            concepts.extend(r.json())
+        return concepts
         
     def ids_to_concepts(self, ids, prefix, flatten):
         concepts = self.search_for_concepts(ids)
