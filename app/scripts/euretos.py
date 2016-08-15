@@ -19,8 +19,9 @@ class Euretos:
         flattened_concepts = []
         for source_id, cs in concepts.items():
             # TODO
-            flattened_concept = {'name': cs[0]['name'],
-                'sourceId': source_id, 'id': cs[0]['id']}
+            flattened_concept = {'name': cs[0]['name'], 
+                'type': cs[0]['type'], 'sourceId': source_id, 
+                'id': cs[0]['id']}
             flattened_concepts.append(flattened_concept)
         return flattened_concepts
         
@@ -46,10 +47,11 @@ class Euretos:
             concepts.extend(r.json())
         return concepts
         
-    def ids_to_concepts(self, ids, prefix, flatten):
+    def ids_to_concepts(self, ids, prefix, type_, flatten):
         concepts = self.search_for_concepts(ids)
         mapped_concepts = defaultdict(list)
         for concept in concepts:
+            concept['type'] = type_
             for synonym in concept['synonyms']:
                 if not synonym['name'].startswith(prefix):
                     continue
@@ -61,11 +63,11 @@ class Euretos:
         
     def chebis_to_concepts(self, chebis, flatten=True):
         chebis = ['CHEBI:{}'.format(chebi) for chebi in chebis]
-        return self.ids_to_concepts(chebis, '[chebi]', flatten)
+        return self.ids_to_concepts(chebis, '[chebi]', 'metabolite', flatten)
         
     def entrez_to_concepts(self, entrez_ids, flatten=True):
         entrez_ids = ['[entrezgene]{}'.format(entrez) for entrez in entrez_ids]
-        return self.ids_to_concepts(entrez_ids, '[entrezgene]', flatten)
+        return self.ids_to_concepts(entrez_ids, '[entrezgene]', 'gene', flatten)
         
     def _find_triple_ids(self, concepts):
         url = self.base_url.format('/external/concept-to-concept/direct')

@@ -10,6 +10,11 @@ h2 {
   color: #333;
 }
 
+h3 {
+    margin-bottom: .5em;
+    text-align: center;
+}
+
 strong {
     color: #555;
 }
@@ -17,6 +22,7 @@ strong {
 textarea {
     border: 1px solid #ddd;
     max-width: 100%;
+    padding: 0;
 }
 
 table {
@@ -95,11 +101,11 @@ a:visited {
     color: #333;
 }
 
-#metabolites > table > tbody > tr {
+#result > table > tbody > tr {
     cursor: pointer;
 }
 
-#metabolites > table > tbody > tr:hover {
+#result > table > tbody > tr:hover {
     border: 1px solid darkgrey;
     background-color: #ddd;
 }
@@ -124,6 +130,21 @@ a:visited {
     margin-bottom: .3em;
 }
 
+.file-drop {
+    width: 100%;
+    height: 100%;
+    background-color: #eaeded;
+    border: 1px dashed #ddd;
+}
+
+#genes {
+    border-left: 3px solid black;
+}
+
+#metabolites {
+    border-left: 3px solid orangered;
+}
+
 /* D3 */
 .nodes {
     cursor: default;
@@ -134,9 +155,17 @@ a:visited {
     user-select: none;
 }
 
-.nodes rect {
+.nodes rect.gene-node {
     color: #333;
     fill: #333;
+    stroke: black;
+}
+
+.nodes rect.metabolite-node {
+    color: #660000;
+    fill: #660000;
+    stroke: #3e0000;
+    rx: 3;
 }
 
 .nodes text {

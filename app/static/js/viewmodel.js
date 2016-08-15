@@ -4,6 +4,12 @@ function ViewModel() {
     self.concepts = ko.observableArray([]);
     self.predicates = ko.observableArray([]);
     self.allPredicates = ko.observableArray([]);
+    self.metabolites = ko.computed(function() {
+        return self.concepts().filter(function(c) { return c.type === 'metabolite'});
+    });
+    self.genes = ko.computed(function() {
+        return self.concepts().filter(function(c) { return c.type === 'gene'});
+    });
     
     self.publicationCount = ko.observable(1);
     self.publicationMax = ko.observable(100);
@@ -14,28 +20,13 @@ function ViewModel() {
     self.graphDirty = ko.observable(false); // Set to true to update graph
     
     self.dataType = ko.observable();
-    self.dataName = ko.observable('');
-    self.url = ko.observable('');
-    ko.computed(function() {
-        var dataType = self.dataType();
-        if (dataType === 'CHEBI') {
-            self.dataName('Metabolite')
-            self.url('https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI:');
-        } else if (dataType === 'Entrez') {
-            self.dataName('Gene');
-            self.url('http://www.ncbi.nlm.nih.gov/gene/?term=');
-        }
-    })
+    self.chebiUrl = 'https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI:';
+    self.entrezUrl = 'http://www.ncbi.nlm.nih.gov/gene/?term=';
     
     self.reset = function() {
         self.concepts([]);
         self.predicates([]);
         self.allPredicates([]);
-    }
-    
-    self.collapseConcept = function(concept) {
-        concept.collapsed(!concept.collapsed());
-        return true;
     }
     
     // This computed is here to detect changes to observables
@@ -59,7 +50,6 @@ function ViewModel() {
             success: function(data, textStatus, jqXHR) {
                 console.log(data);
                 self.concepts(data.concepts.map(function(concept) {
-                    concept.collapsed = ko.observable(false);
                     concept.show = ko.observable(true);
                     return concept;
                 }));

@@ -10,15 +10,11 @@ random_color = randomcolor.RandomColor()
 
 @app.route('/concepts', methods=['GET', 'POST'])
 def concepts():
-    ids = request.form['ids'].splitlines()
-    type_ = request.form['type']
-    if type_ == 'CHEBI':
-        concepts = euretos.chebis_to_concepts(ids, flatten=True)
-    elif type_ == 'Entrez':
-        concepts = euretos.entrez_to_concepts(ids, flatten=True)
-    else:
-        return jsonify({})
-    return jsonify({'concepts': concepts})
+    metabolites = request.form['metabolites'].splitlines()
+    genes = request.form['genes'].splitlines()
+    concepts_ = euretos.chebis_to_concepts(metabolites, flatten=True)
+    concepts_.extend(euretos.entrez_to_concepts(genes, flatten=True))
+    return jsonify({'concepts': concepts_})
 
 
 @app.route('/predicates', methods=['GET', 'POST'])

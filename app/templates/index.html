@@ -6,12 +6,18 @@
     <div class="pure-u-1-3" id="left">
         <div data-bind="visible: concepts().length === 0">
             <form data-bind="submit: getConcepts">
-                <select class="button" id="type-select" name="type"
-                        data-bind="value: dataType">
-                    <option value="CHEBI">Metabolites (ChEBI)</option>
-                    <option value="Entrez">Genes (Entrez)</option>
-                </select>
-                <textarea rows="15" name="ids" style="width: 100%"></textarea>
+                <div class="pure-g">
+                    <div class="pure-u-1-2">
+                        <h3>Genes (Entrez)</h3>
+                        <textarea rows="15" name="genes" style="width: 100%"></textarea>
+                    </div>
+                    <div class="pure-u-1-2">
+                        <h3>Metabolites (ChEBI)</h3>
+                        <textarea rows="15" name="metabolites" 
+                            style="width: 100%; margin-left: .3em"></textarea>
+                    </div>
+                </div>
+                
                 <button class="button" type="submit">Submit</button>
             </form>
         </div>
@@ -19,18 +25,18 @@
         <!-- ko if: concepts().length > 0 -->
         <!--<button class="button" data-bind="click: function() { graphDirty(true); }">Update</button>-->
 
-        <div id="metabolites">
-            <table>
+        <div id="result">
+            <table id="metabolites">
                 <thead>
                     <tr>
                         <th><input type="checkbox" /></th>
-                        <th data-bind="text: dataName"></th>
+                        <th>Metabolite</th>
                         <th>Euretos</th>
-                        <th data-bind="text: dataType">CHEBI</th>
+                        <th>CHEBI</th>
                     </tr>
                 </thead>
-                <tbody data-bind="foreach: concepts">
-                    <tr data-bind="click: $root.collapseConcept">
+                <tbody data-bind="foreach: metabolites">
+                    <tr>
                         <td>
                             <input type="checkbox" 
                                    data-bind="checked: show, 
@@ -40,12 +46,40 @@
                         <td data-bind="text: id"></td>
                         <td>
                             <a data-bind="text: sourceId,
-                                          attr: {href: $root.url() + sourceId}">
+                                          attr: {href: $root.chebiUrl + sourceId}">
                             </a>
                         </td>
                     </tr>
                 </tbody>
             </table>
+            
+            <table id="genes">
+                <thead>
+                    <tr>
+                        <th><input type="checkbox" /></th>
+                        <th>Gene</th>
+                        <th>Euretos</th>
+                        <th>Entrez</th>
+                    </tr>
+                </thead>
+                <tbody data-bind="foreach: genes">
+                    <tr>
+                        <td>
+                            <input type="checkbox" 
+                                   data-bind="checked: show, 
+                                              click: function() { $root.graphDirty(true); return true; }" />
+                        </td>
+                        <td data-bind="text: name"></td>
+                        <td data-bind="text: id"></td>
+                        <td>
+                            <a data-bind="text: sourceId,
+                                          attr: {href: $root.entrezUrl + sourceId}">
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            
             <button class="button" data-bind="click: reset">
                 <span class="fa fa-arrow-left"></span> Back
             </button>

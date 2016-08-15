@@ -153,6 +153,10 @@ ko.bindingHandlers.graph = {
                 d.width = width;
                 return width; 
             })
+            .attr('class', function(d) {
+                return d.type === 'gene' ? 'gene-node' : 'metabolite-node';
+            })
+            .attr('rx', function(d) { return d.type === 'gene' ? 0 : 3})
             .attr('height', nodeHeight);
 
         // Now that we know the width, the text will be readded.
