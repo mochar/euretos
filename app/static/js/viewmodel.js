@@ -98,6 +98,7 @@ function ViewModel() {
                 console.log(data);
                 console.log('----------------------\n');
                 self.publicationMax(d3.max(data.predicates, function(p) { return p.publicationCount; }))
+                self.dirty(false);
                 self.predicates(data.predicates);
                 self.allPredicates(data.all.map(function(predicate) {
                     predicate.show = true;
