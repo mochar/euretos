@@ -1,15 +1,39 @@
+function Pagination(data) {
+    var self = this;
+    self.data = data;
+    self.items = 12;
+    self.page = ko.observable(1);
+    self.pages = ko.computed(function() {
+        return Math.ceil(self.data().length / self.items);
+    });
+    self.offset = ko.computed(function() {
+        return (self.page() - 1) * self.items;
+    });
+    self.dataToShow = ko.computed(function() {
+        var offset = self.offset();
+        return self.data().slice(offset, offset + self.items + 1);
+    });
+    self.prev = function() { if (self.canPrev()) self.page(self.page() - 1); };
+    self.next = function() { if (self.canNext()) self.page(self.page() + 1); };
+    self.canPrev = ko.computed(function() { return self.page() > 1; });
+    self.canNext = ko.computed(function() { return self.page() < self.pages(); });
+}
 
 function ViewModel() {
     var self = this;
     self.concepts = ko.observableArray([]);
     self.predicates = ko.observableArray([]);
     self.allPredicates = ko.observableArray([]);
+    
     self.metabolites = ko.computed(function() {
         return self.concepts().filter(function(c) { return c.type === 'metabolite'});
     });
+    self.metabolitesPagination = new Pagination(self.metabolites);
+    
     self.genes = ko.computed(function() {
         return self.concepts().filter(function(c) { return c.type === 'gene'});
     });
+    self.genesPagination = new Pagination(self.genes);
     
     self.publicationCount = ko.observable(1);
     self.publicationMax = ko.observable(100);

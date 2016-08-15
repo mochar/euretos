@@ -41,9 +41,9 @@ a:link {
   text-decoration: none;
 }
 
-a:visited {
-    color: #67041d;
-}
+a:hover { color: #a20029; }
+
+a:visited { color: #67041d; }
 
 /* PURE CSS */
 .pure-g > div {
@@ -142,7 +142,37 @@ a:visited {
 }
 
 #metabolites {
-    border-left: 3px solid orangered;
+    border-left: 3px solid #b30303;
+}
+
+.table-container {
+    margin-bottom: .5em;
+}
+
+.table-container > table {
+    border-bottom: 0;
+}
+
+.pagination-control {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-top: 0;
+}
+
+.pagination-control .button {
+    border-color: white;
+    color: #67041d;
+    cursor: pointer;
+}
+
+.pagination-control .button:hover {
+    border-color: #ddd;
+    color: #e81c4f;
+}
+
+.pagination-control .button:disabled {
+    color: grey;
+    border-color: white;
 }
 
 /* D3 */

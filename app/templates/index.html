@@ -26,59 +26,93 @@
         <!--<button class="button" data-bind="click: function() { graphDirty(true); }">Update</button>-->
 
         <div id="result">
-            <table id="metabolites">
-                <thead>
-                    <tr>
-                        <th><input type="checkbox" /></th>
-                        <th>Metabolite</th>
-                        <th>Euretos</th>
-                        <th>CHEBI</th>
-                    </tr>
-                </thead>
-                <tbody data-bind="foreach: metabolites">
-                    <tr>
-                        <td>
-                            <input type="checkbox" 
-                                   data-bind="checked: show, 
-                                              click: function() { $root.graphDirty(true); return true; }" />
-                        </td>
-                        <td data-bind="text: name"></td>
-                        <td data-bind="text: id"></td>
-                        <td>
-                            <a data-bind="text: sourceId,
-                                          attr: {href: $root.chebiUrl + sourceId}">
-                            </a>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="table-container" id="metabolites" data-bind="with: metabolitesPagination">
+                <table>
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" /></th>
+                            <th>Metabolite</th>
+                            <th>Euretos</th>
+                            <th>CHEBI</th>
+                        </tr>
+                    </thead>
+                    <tbody data-bind="foreach: dataToShow">
+                        <tr>
+                            <td>
+                                <input type="checkbox" 
+                                    data-bind="checked: show, 
+                                                click: function() { $root.graphDirty(true); return true; }" />
+                            </td>
+                            <td data-bind="text: name"></td>
+                            <td data-bind="text: id"></td>
+                            <td>
+                                <a data-bind="text: sourceId,
+                                            attr: {href: $root.chebiUrl + sourceId}">
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="pure-g pagination-control">
+                    <div class="pure-u-1-5">
+                        <button class="button" style="width: 100%" 
+                                data-bind="enable: canPrev, click: prev">
+                            Prev
+                        </button>
+                    </div>
+                    <div class="pure-u-1-5">
+                        <button class="button" style="width: 100%"
+                                data-bind="enable: canNext, click: next">
+                            Next
+                        </button>
+                    </div>
+                    <div class="pure-u-3-5"></div>
+                </div>
+            </div>
             
-            <table id="genes">
-                <thead>
-                    <tr>
-                        <th><input type="checkbox" /></th>
-                        <th>Gene</th>
-                        <th>Euretos</th>
-                        <th>Entrez</th>
-                    </tr>
-                </thead>
-                <tbody data-bind="foreach: genes">
-                    <tr>
-                        <td>
-                            <input type="checkbox" 
-                                   data-bind="checked: show, 
-                                              click: function() { $root.graphDirty(true); return true; }" />
-                        </td>
-                        <td data-bind="text: name"></td>
-                        <td data-bind="text: id"></td>
-                        <td>
-                            <a data-bind="text: sourceId,
-                                          attr: {href: $root.entrezUrl + sourceId}">
-                            </a>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="table-container" id="genes" data-bind="with: genesPagination">
+                <table>
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" /></th>
+                            <th>Gene</th>
+                            <th>Euretos</th>
+                            <th>Entrez</th>
+                        </tr>
+                    </thead>
+                    <tbody data-bind="foreach: dataToShow">
+                        <tr>
+                            <td>
+                                <input type="checkbox" 
+                                    data-bind="checked: show, 
+                                                click: function() { $root.graphDirty(true); return true; }" />
+                            </td>
+                            <td data-bind="text: name"></td>
+                            <td data-bind="text: id"></td>
+                            <td>
+                                <a data-bind="text: sourceId,
+                                            attr: {href: $root.entrezUrl + sourceId}">
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="pure-g pagination-control">
+                    <div class="pure-u-1-5">
+                        <button class="button" style="width: 100%" 
+                                data-bind="enable: canPrev, click: prev">
+                            Prev
+                        </button>
+                    </div>
+                    <div class="pure-u-1-5">
+                        <button class="button" style="width: 100%"
+                                data-bind="enable: canNext, click: next">
+                            Next
+                        </button>
+                    </div>
+                    <div class="pure-u-3-5"></div>
+                </div>
+            </div>
             
             <button class="button" data-bind="click: reset">
                 <span class="fa fa-arrow-left"></span> Back
