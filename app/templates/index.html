@@ -114,44 +114,51 @@
                 </div>
             </div>
             
-            <button class="button button-primary" data-bind="click: reset">
+            <button class="button button-strong" data-bind="click: reset">
                 <span class="fa fa-arrow-left"></span> Back
             </button>
         </div>
         <!-- /ko -->
     </div>
 
+
     <div class="pure-u-2-3" id="right">
-        <div class="panel" id="parameters">
-            <div class="pure-g">
-                <div class="pure-u-2-3">
-                    <a href="#" data-bind="click: function() { toggled(!toggled()); }">
-                        <span class="fa fa-lg fa-caret-right extra-toggle"></span>
-                    </a>
-                    
-                    <strong>Min. # publications</strong> 
-                    <input type="number" min="1" 
-                        data-bind="value: publicationCount,
-                                   attr: {'max': publicationMax }" />
-                    <span>
-                        /
-                        <span data-bind="text: publicationMax"></span>
-                    </span>
-                </div>
-                
-                <div class="pure-u-1-3">
-                    <select multiple="multiple" id="predicates-filter" 
-                            data-bind="foreach: allPredicates">
-                        <option data-bind="value: id, text: name"></option>
-                    </select>
+        <div class="pure-g">
+            <div class="pure-u-7-8">
+                <div class="panel" id="parameters">
+                    <div class="pure-g">
+                        <div class="pure-u-1-3">
+                            <strong>Min. # publications</strong> 
+                            <input type="number" min="1" 
+                                data-bind="value: publicationCount,
+                                        attr: {'max': publicationMax }" />
+                            <span>
+                                /
+                                <span data-bind="text: publicationMax"></span>
+                            </span>
+                        </div>
+                        
+                        <div class="pure-u-1-3" style="padding-right: 1em">
+                            <select multiple="multiple" id="options">
+                                <option value="oneColor"> One color</option>
+                                <option value="sameWidth"> One link width</option>
+                                <option value="lonelyConcepts"> Show concepts with no connections</option>
+                            </select>
+                        </div>
+                        
+                        <div class="pure-u-1-3">
+                            <select multiple="multiple" id="predicates-filter" 
+                                    data-bind="foreach: allPredicates">
+                                <option data-bind="value: id, text: name"></option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-        
-        <div id="settings" class="panel" data-bind="visible: toggled">
-            <label><input type="checkbox" data-bind="checked: oneColor"> One color</label>
-            <label><input type="checkbox" data-bind="checked: sameWidth"> Scale link width to publication count</label>
-            <label><input type="checkbox" data-bind="checked: lonelyConcepts"> Show concepts with no connections</label>
+            <div class="pure-u-1-8" style="padding: .5em">
+                <button class="button button-primary button-block" 
+                        data-bind="click: updateGraph, enable: dirty" disabled>UPDATE</button>
+            </div>
         </div>
 
         <div class="panel" id="graph">

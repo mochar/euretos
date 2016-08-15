@@ -37,10 +37,11 @@ function ViewModel() {
     
     self.publicationCount = ko.observable(1);
     self.publicationMax = ko.observable(100);
-    self.toggled = ko.observable(false);
     self.oneColor = ko.observable(false);
     self.sameWidth = ko.observable(false);
     self.lonelyConcepts = ko.observable(false);
+    
+    self.dirty = ko.observable(false); // Automatically set to true when a parameter changes
     self.graphDirty = ko.observable(false); // Set to true to update graph
     
     self.dataType = ko.observable();
@@ -53,15 +54,16 @@ function ViewModel() {
         self.allPredicates([]);
     }
     
+    self.updateGraph = function() {
+        self.graphDirty(true);
+        self.dirty(false);
+    }
+    
     // This computed is here to detect changes to observables
     // that need to update the graph.
     ko.computed(function() {
         self.publicationCount();
-        self.publicationMax();
-        self.oneColor();
-        self.sameWidth();
-        self.lonelyConcepts();
-        self.graphDirty(true);
+        self.dirty(true);
     });
     
     self.getConcepts = function(formElement) {
@@ -127,15 +129,33 @@ function ViewModel() {
                     predicate.show = selected.indexOf(predicate.id) > -1;
                 });
             }
-            self.graphDirty(true);
+            self.dirty(true);
         },
         onCheckAll: function() {
             self.allPredicates().forEach(function(p) { p.show = true; });
-            self.graphDirty(true);
+            self.dirty(true);
         },
         onUncheckAll: function() {
             self.allPredicates().forEach(function(p) { p.show = true; });
-            self.graphDirty(true);
+            self.dirty(true);
+        }
+    });
+    
+    $('#options').multipleSelect({
+        placeholder: 'Options',
+        selectAll: false,
+        onClick: function(view) {
+            switch(view.value) {
+                case 'oneColor':
+                    self.oneColor(view.checked);
+                    break;
+                case 'sameWidth':
+                    self.sameWidth(view.checked);
+                    break;
+                case 'lonelyConcepts':
+                    self.lonelyConcepts(view.checked);
+            }
+            self.dirty(true);
         }
     });
 }
