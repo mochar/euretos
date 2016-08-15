@@ -77,7 +77,6 @@ function ViewModel() {
                     concept.show = ko.observable(true);
                     return concept;
                 }));
-                formElement.reset();
                 self.getPredicates();
             },
             cache: false,
