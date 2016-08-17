@@ -42,9 +42,8 @@ function ViewModel() {
     self.lonelyConcepts = ko.observable(false);
     
     self.dirty = ko.observable(false); // Automatically set to true when a parameter changes
-    self.graphDirty = ko.observable(false); // Set to true to update graph
+    self.graph = graphChart();
     
-    self.dataType = ko.observable();
     self.chebiUrl = 'https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI:';
     self.entrezUrl = 'http://www.ncbi.nlm.nih.gov/gene/?term=';
     
@@ -54,8 +53,20 @@ function ViewModel() {
         self.allPredicates([]);
     }
     
-    self.updateGraph = function() {
-        self.graphDirty(true);
+    self.updateChart = function() {
+        var graphElement = d3.select('#graph');
+        self.graph
+            .concepts(self.concepts())
+            .allPredicates(self.allPredicates())
+            .predicates(self.predicates())
+            .publicationCount(self.publicationCount())
+            .publicationMax(self.publicationMax())
+            .oneColor(self.oneColor())
+            .sameWidth(self.sameWidth())
+            .lonelyConcepts(self.lonelyConcepts())
+            .width(graphElement.style('width').replace(/px/g, ''))
+            .height(graphElement.style('height').replace(/px/g, ''));
+        graphElement.datum([]).call(self.graph);
         self.dirty(false);
     }
     
@@ -105,7 +116,7 @@ function ViewModel() {
                     return predicate;
                 }));
                 $('#predicates-filter').multipleSelect('refresh');
-                self.graphDirty(true);
+                self.updateChart();
             },
             data: JSON.stringify(data)
         });

@@ -23,7 +23,7 @@
         </div>
         
         <!-- ko if: concepts().length > 0 -->
-        <!--<button class="button" data-bind="click: function() { graphDirty(true); }">Update</button>-->
+        <!--<button class="button" data-bind="click: updateChart">Update</button>-->
 
         <div id="result">
             <div class="table-container" id="metabolites" data-bind="with: metabolitesPagination">
@@ -39,9 +39,7 @@
                     <tbody data-bind="foreach: dataToShow">
                         <tr>
                             <td>
-                                <input type="checkbox" 
-                                    data-bind="checked: show, 
-                                                click: function() { $root.graphDirty(true); return true; }" />
+                                <input type="checkbox" data-bind="checked: show" />
                             </td>
                             <td data-bind="text: name"></td>
                             <td data-bind="text: id"></td>
@@ -83,9 +81,7 @@
                     <tbody data-bind="foreach: dataToShow">
                         <tr>
                             <td>
-                                <input type="checkbox" 
-                                    data-bind="checked: show, 
-                                                click: function() { $root.graphDirty(true); return true; }" />
+                                <input type="checkbox" data-bind="checked: show">
                             </td>
                             <td data-bind="text: name"></td>
                             <td data-bind="text: id"></td>
@@ -157,13 +153,11 @@
             </div>
             <div class="pure-u-1-8" style="padding: .5em">
                 <button class="button button-primary button-block" 
-                        data-bind="click: updateGraph, enable: dirty" disabled>UPDATE</button>
+                        data-bind="click: updateChart, enable: dirty" disabled>UPDATE</button>
             </div>
         </div>
 
-        <div class="panel" id="graph">
-            <div data-bind="graph: graphDirty"></div>
-        </div>
+        <div class="panel" id="graph"></div>
     </div>
 </div>
 
