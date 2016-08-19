@@ -106,3 +106,12 @@ class Euretos:
                 'publicationCount': len(triple['publicationIds'])
             })
         return triples
+
+    def find_direct_connections(self, concept_ids):
+        url = self.base_url.format('/external/direct-connections-with-scores')
+        data = {
+            'ids': concept_ids,
+            'relationshipWeightAlgorithm': 'pws', 
+        }
+        r = self.s.post(url, data=json.dumps(data))
+        return r.json()['content']
