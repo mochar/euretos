@@ -21,30 +21,35 @@ function Pagination(data) {
 
 function ViewModel() {
     var self = this;
+    
+    // Graph data
     self.concepts = ko.observableArray([]);
     self.predicates = ko.observableArray([]);
     self.allPredicates = ko.observableArray([]);
     
+    // Metabolite concepts
     self.metabolites = ko.computed(function() {
         return self.concepts().filter(function(c) { return c.type === 'metabolite'});
     });
     self.metabolitesPagination = new Pagination(self.metabolites);
     
+    // Gene concepts
     self.genes = ko.computed(function() {
         return self.concepts().filter(function(c) { return c.type === 'gene'});
     });
     self.genesPagination = new Pagination(self.genes);
     
+    // Graph parameters
     self.publicationCount = ko.observable(1);
     self.publicationMax = ko.observable(100);
     self.oneColor = ko.observable(false);
     self.sameWidth = ko.observable(false);
     self.lonelyConcepts = ko.observable(false);
     
+    // Graph updating
     self.dirty = ko.observable(false); // Automatically set to true when a parameter changes
     self.graphDirty = ko.observable(false); // Set to true to update graph
     
-    self.dataType = ko.observable();
     self.chebiUrl = 'https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI:';
     self.entrezUrl = 'http://www.ncbi.nlm.nih.gov/gene/?term=';
     
