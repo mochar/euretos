@@ -3,10 +3,19 @@ import numpy as np
 
 
 class Enrichment:
-    def __init__(self, euretos, metabolites, concepts):
+    def __init__(self, euretos, metabolites, concepts=None):
         self.euretos = euretos
-        self.cutoff = 1000
-        self.calculate_matrix(metabolites, concepts)
+        self.metabolites = metabolites
+        self.concepts = concepts
+        self.cutoff = 100
+        if concepts is None:
+            self._find_go_concepts()
+        self.matrix = self.calculate_matrix()
+        
+    def _find_go_concepts(self):
+        concepts = self.euretos.find_go_concepts('mf')
+        self._concepts = {c['id']: c['name'] for c in concepts}
+        self.concepts = [c['id'] for c in concepts]
                 
     def _iterate_connections(self, concepts):
         for connection in self.euretos.find_direct_connections(concepts):
@@ -23,10 +32,10 @@ class Enrichment:
                 neighbours[source_node['id']].append(neighbour)
         return neighbours
 
-    def calculate_matrix(self, metabolites, concepts):
-        matrix = np.zeros(shape=(len(concepts), len(metabolites)))
-        concept_neighbours = self._create_neighbour_dict(concepts)
-        metabolite_neigbours = self._create_neighbour_dict(metabolites)
+    def calculate_matrix(self):
+        matrix = np.zeros(shape=(len(self.concepts), len(self.metabolites)))
+        concept_neighbours = self._create_neighbour_dict(self.concepts)
+        metabolite_neigbours = self._create_neighbour_dict(self.metabolites)
         for i, concept in enumerate(concept_neighbours.items()):
             concept, c_neighbours = concept
             c_neighbours_by_id = {n['id']: n for n in c_neighbours}

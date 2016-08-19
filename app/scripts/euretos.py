@@ -115,3 +115,22 @@ class Euretos:
         }
         r = self.s.post(url, data=json.dumps(data))
         return r.json()['content']
+
+    def find_go_concepts(self, go):
+        """
+        TODO: pagination in Euretos
+        Molecular function = mf = go id 322870
+        Biologcal process = bp = go id 1669558
+        """
+        if go not in ['mf', 'bp']: 
+            raise Exception('GO term should be: mf OR bp')
+        go_concept_id = {'mf': '322870', 'bp': '1669558'}[go]
+        url = self.base_url.format('/external/concept-to-semantic/direct')
+        data = {
+            'leftInputs': [go_concept_id], 
+            'relationshipWeightAlgorithm': 'PWS', 
+            'rightInputs': ['sc:Physiology'], 
+            'sort': 'ASC'
+        }
+        r = self.s.post(url, data=json.dumps(data))
+        return [connection['concepts'][1] for connection in r.json()['content']]
