@@ -24,9 +24,30 @@
         
         <!-- ko if: concepts().length > 0 -->
         <!--<button class="button" data-bind="click: function() { graphDirty(true); }">Update</button>-->
+        <div class="pure-g">
+            <div class="pure-u-1-6">
+                <button class="button button-strong button-block" data-bind="click: reset">
+                    <span class="fa fa-arrow-left"></span> Back
+                </button>
+            </div>
+            <div class="pure-u-1-6"></div>
+            <div class="pure-u-2-6">
+                <button class="button button-block"
+                        data-bind="click: function() {geneTable(true); },
+                                   css: geneTable() ? 'button-primary' : 'button-styled'">
+                        Genes</button>
+            </div>
+            <div class="pure-u-2-6">
+                <button class="button button-block"
+                        data-bind="click: function() {geneTable(false); },
+                                   css: geneTable() ? 'button-styled' : 'button-primary'">
+                        Metabolites</button>
+            </div>
+        </div>
 
         <div id="result">
-            <div class="table-container" id="metabolites" data-bind="with: metabolitesPagination">
+            <div class="table-container" id="metabolites" 
+                 data-bind="with: metabolitesPagination, visible: !geneTable()">
                 <table>
                     <thead>
                         <tr>
@@ -70,7 +91,8 @@
                 </div>
             </div>
             
-            <div class="table-container" id="genes" data-bind="with: genesPagination">
+            <div class="table-container" id="genes" 
+                 data-bind="with: genesPagination, visible: geneTable">
                 <table>
                     <thead>
                         <tr>
@@ -113,10 +135,6 @@
                     <div class="pure-u-3-5"></div>
                 </div>
             </div>
-            
-            <button class="button button-strong" data-bind="click: reset">
-                <span class="fa fa-arrow-left"></span> Back
-            </button>
         </div>
         <!-- /ko -->
     </div>

@@ -1,7 +1,7 @@
 function Pagination(data) {
     var self = this;
     self.data = data;
-    self.items = 12;
+    self.items = 20;
     self.page = ko.observable(1);
     self.pages = ko.computed(function() {
         return Math.ceil(self.data().length / self.items);
@@ -53,6 +53,11 @@ function ViewModel() {
     self.chebiUrl = 'https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI:';
     self.entrezUrl = 'http://www.ncbi.nlm.nih.gov/gene/?term=';
     
+    
+    // Whether to show the genes table (true) or metabolites table (false)
+    // Boolean for ease of use
+    self.geneTable = ko.observable(true);
+    
     self.reset = function() {
         self.concepts([]);
         self.predicates([]);
@@ -80,6 +85,7 @@ function ViewModel() {
             async: true,
             success: function(data, textStatus, jqXHR) {
                 console.log(data);
+                if (formData.get('genes') === '') self.geneTable(false);
                 self.concepts(data.concepts.map(function(concept) {
                     concept.show = ko.observable(true);
                     return concept;
