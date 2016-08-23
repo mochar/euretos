@@ -22,28 +22,22 @@ function graphChart() {
         allPredicatesById = d3.map(),
         bilinks = [];
         
-    // d3-force forces
-    var linkForce = d3.forceLink().id(function(d) { return d.id; }).distance(100),
-        chargeForce = d3.forceManyBody().strength(-40),
-        centerForce = d3.forceCenter(width / 2, height / 2);
-    
     // d3-force simulation object
     // Link nodes are identified by d.id, so we don't have to add the nodes 
     // manually to the link objects.
-    // var simulation = d3.forceSimulation()
-    //     .force('link', d3.forceLink().id(function(d) { return d.id; }).distance(100))
-    //     .force('charge', d3.forceManyBody().strength(-40))
-    //     .force('center', d3.forceCenter())
-    //     .on('tick', ticked);
-    var simulation = d3.forceSimulation().on('tick', ticked);
+    var simulation = d3.forceSimulation()
+        .force('link', d3.forceLink().id(function(d) { return d.id; }).distance(100))
+        .force('charge', d3.forceManyBody().strength(-40))
+        .force('center', d3.forceCenter())
+        .on('tick', ticked);
         
     function chart(selection) {
         selection.each(function(data) {
             console.log('update');
-            // Select the svg element, if it exists.
+            // Select the svg element, if it exists
             var svg = d3.select(this).selectAll('svg').data([data]);
 
-            // Otherwise, create the skeletal chart.
+            // Otherwise, create the skeletal chart
             var svgEnter = svg.enter().append('svg');
             var gEnter = svgEnter.append('g');
             gEnter.append('g').attr('class', 'links');
@@ -62,13 +56,6 @@ function graphChart() {
             
             // Update the outer dimensions.
             svg.attr('width', width).attr('height', height);
-            
-            // Update simulation
-            // simulation.force('center').x(width / 2).y(height / 2);
-            simulation
-                .force('link', linkForce)
-                .force('charge', chargeForce)
-                .force('center', centerForce.x(width / 2).y(height / 2));
             
             // Create arrow-head markers per predicate-type
             var marker = defs.selectAll('marker')
@@ -113,7 +100,9 @@ function graphChart() {
             node.exit().remove();
             var nodeEnter = node.enter().append('g')
                 .attr('class', 'node')
-                .on('click', function(d, i) { console.log(d); })
+                .on('click', function(d, i) { 
+                    console.log(d); 
+                })
                 .call(d3.drag()
                     .on('start', dragstarted)
                     .on('drag', dragged)
@@ -148,9 +137,10 @@ function graphChart() {
                 
             node = nodeEnter.merge(node);
             
-            // Add the nodes and links to the simulation
+            // Update simulation
             simulation.nodes(concepts);
             simulation.force('link').links(predicates);
+            simulation.force('center').x(width / 2).y(height / 2);
         });
     }
             
@@ -209,10 +199,10 @@ function graphChart() {
     function dragstarted(d) {
         if (!d3.event.active) simulation.alphaTarget(0.3).restart();
         // Stop de simulation when the first node is dragged.
-        simulation
-            .force('charge', null)
-            .force('center', null)
-            .force('link', null);
+        // simulation
+        //     .force('charge', null)
+        //     .force('center', null)
+        //     .force('link', null);
         d.fx = d.x;
         d.fy = d.y;
     }

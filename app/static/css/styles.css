@@ -69,6 +69,10 @@ a:visited { color: #67041d; }
   width: 100% !important;
 }
 
+.ms-choice, .ms-drop {
+    border-radius: 0;
+}
+
 /* CUSTOM */
 .panel {
     background-color: white;
@@ -92,6 +96,8 @@ a:visited { color: #67041d; }
 
 #graph {
     height: 600px;
+    position: relative;
+    padding-top: .5em;
 }
 
 .button {
@@ -99,6 +105,10 @@ a:visited { color: #67041d; }
     background-color: white;
     border: 1px solid #ddd;
     color: #333;
+}
+
+.button:focus {
+    outline: 0;
 }
 
 .button:disabled {
@@ -112,12 +122,43 @@ a:visited { color: #67041d; }
     color: white;
     font-weight: bold;
     border: 1px solid #ab0830;
-    font-size: .9em;
+}
+
+.button-styled {
+    cursor: pointer;
+}
+
+.button-styled:hover {
+    border-color: #ddd;
+    color: #e81c4f;
+}
+
+.button-styled:disabled {
+    color: grey;
+    border-color: white;
+}
+
+.button-selected {
+    color: #ab0830;
+    font-weight: bold;
+    border: 1px solid #ab0830;
+}
+
+.button-transparent {
+    background-color: transparent;
+    border: 0;
+    color: #555;
 }
 
 .button-strong {
     font-weight: bold;
-    font-size: .9em;
+}
+
+.button-flexible {
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    display: inline-block;
 }
 
 .button-primary:hover {
@@ -127,6 +168,10 @@ a:visited { color: #67041d; }
 .button-block {
     width: 100%;
     height: 100%;
+}
+
+#result {
+    margin-top: 1em;
 }
 
 #result > table > tbody > tr {
@@ -161,6 +206,16 @@ a:visited { color: #67041d; }
     border-left: 3px solid #b30303;
 }
 
+.result-table {
+    border-top: 0;
+}
+
+.panel-toolbar {
+    padding: .3em;
+    display: inline-block;
+    border-bottom: 0;
+}
+
 .table-container {
     margin-bottom: .5em;
 }
@@ -177,18 +232,17 @@ a:visited { color: #67041d; }
 
 .pagination-control .button {
     border-color: white;
-    color: #67041d;
-    cursor: pointer;
 }
 
-.pagination-control .button:hover {
-    border-color: #ddd;
-    color: #e81c4f;
+#update-button {
+    position: absolute;
+    width: 7em;
+    height: 2.5em;
+    right: 1em;
 }
 
-.pagination-control .button:disabled {
-    color: grey;
-    border-color: white;
+#tabs {
+    font-size: .9em;
 }
 
 /* D3 */

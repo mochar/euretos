@@ -1,7 +1,7 @@
 function Pagination(data) {
     var self = this;
     self.data = data;
-    self.items = 12;
+    self.items = 20;
     self.page = ko.observable(1);
     self.pages = ko.computed(function() {
         return Math.ceil(self.data().length / self.items);
@@ -19,33 +19,64 @@ function Pagination(data) {
     self.canNext = ko.computed(function() { return self.page() < self.pages(); });
 }
 
+function Table(data, columns, url) {
+    var self = this;
+    self.data = data;
+    self.columns = columns;
+    self.url = url;
+    self.searchWord = ko.observable('');
+
+    self.filteredData = ko.computed(function() {
+        var searchWord = self.searchWord(),
+            data = self.data();
+        if (self.pagination) self.pagination.page(1);
+        return data.filter(function(d) {
+            return d.name.lastIndexOf(searchWord, 0) === 0;
+        });
+    }).extend({ throttle: 500 });
+    
+    self.pagination = new Pagination(self.filteredData);
+}
+
 function ViewModel() {
     var self = this;
+    
+    // Graph data
     self.concepts = ko.observableArray([]);
     self.predicates = ko.observableArray([]);
     self.allPredicates = ko.observableArray([]);
     
+    // Metabolite concepts
     self.metabolites = ko.computed(function() {
         return self.concepts().filter(function(c) { return c.type === 'metabolite'});
     });
-    self.metabolitesPagination = new Pagination(self.metabolites);
+    self.metaboliteTable = new Table(self.metabolites, ['Metabolite', 'Euretos', 'CHEBI'], 
+        'https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI:');
     
+    // Gene concepts
     self.genes = ko.computed(function() {
         return self.concepts().filter(function(c) { return c.type === 'gene'});
     });
-    self.genesPagination = new Pagination(self.genes);
+    self.geneTable = new Table(self.genes, ['Gene', 'Euretos', 'Entrez'], 
+        'http://www.ncbi.nlm.nih.gov/gene/?term=');
     
+    // Graph parameters
     self.publicationCount = ko.observable(1);
     self.publicationMax = ko.observable(100);
     self.oneColor = ko.observable(false);
     self.sameWidth = ko.observable(false);
     self.lonelyConcepts = ko.observable(false);
     
+    // True when waiting response from server
+    self.loading = ko.observable(false);
+    
+    // Graph updating
     self.dirty = ko.observable(false); // Automatically set to true when a parameter changes
     self.graph = graphChart();
     
-    self.chebiUrl = 'https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI:';
-    self.entrezUrl = 'http://www.ncbi.nlm.nih.gov/gene/?term=';
+    // Whether to show the genes table (true) or metabolites table (false)
+    // Boolean for ease of use
+    self.tab = ko.observable('graph');
     
     self.reset = function() {
         self.concepts([]);
@@ -74,40 +105,25 @@ function ViewModel() {
     // that need to update the graph.
     ko.computed(function() {
         self.publicationCount();
+        self.oneColor();
+        self.sameWidth();
+        self.lonelyConcepts();
         self.dirty(true);
     });
     
     self.getConcepts = function(formElement) {
         var formData = new FormData(formElement);
+        self.loading(true);
         $.ajax({
             url: '/concepts',
             type: 'POST',
             data: formData,
             async: true,
             success: function(data, textStatus, jqXHR) {
-                console.log(data);
                 self.concepts(data.concepts.map(function(concept) {
                     concept.show = ko.observable(true);
                     return concept;
                 }));
-                self.getPredicates();
-            },
-            cache: false,
-            contentType: false,
-            processData: false
-        });
-    };
-    
-    self.getPredicates = function() {
-        var data = {concepts: self.concepts().map(function(c) { return c.id })};
-        $.ajax({
-            url: '/predicates',
-            type: 'POST',
-            dataType: 'json',
-            contentType: 'application/json; charset=utf-8',
-            success: function (data) {
-                console.log(data);
-                console.log('----------------------\n');
                 self.publicationMax(d3.max(data.predicates, function(p) { return p.publicationCount; }))
                 self.dirty(false);
                 self.predicates(data.predicates);
@@ -117,8 +133,11 @@ function ViewModel() {
                 }));
                 $('#predicates-filter').multipleSelect('refresh');
                 self.updateChart();
+                self.loading(false);
             },
-            data: JSON.stringify(data)
+            cache: false,
+            contentType: false,
+            processData: false
         });
     };
     
@@ -149,24 +168,6 @@ function ViewModel() {
         },
         onUncheckAll: function() {
             self.allPredicates().forEach(function(p) { p.show = true; });
-            self.dirty(true);
-        }
-    });
-    
-    $('#options').multipleSelect({
-        placeholder: 'Options',
-        selectAll: false,
-        onClick: function(view) {
-            switch(view.value) {
-                case 'oneColor':
-                    self.oneColor(view.checked);
-                    break;
-                case 'sameWidth':
-                    self.sameWidth(view.checked);
-                    break;
-                case 'lonelyConcepts':
-                    self.lonelyConcepts(view.checked);
-            }
             self.dirty(true);
         }
     });
