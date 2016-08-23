@@ -66,6 +66,9 @@ function ViewModel() {
     self.sameWidth = ko.observable(false);
     self.lonelyConcepts = ko.observable(false);
     
+    // True when waiting response from server
+    self.loading = ko.observable(false);
+    
     // Graph updating
     self.dirty = ko.observable(false); // Automatically set to true when a parameter changes
     self.graphDirty = ko.observable(false); // Set to true to update graph
@@ -94,36 +97,18 @@ function ViewModel() {
     
     self.getConcepts = function(formElement) {
         var formData = new FormData(formElement);
+        self.loading(true);
         $.ajax({
             url: '/concepts',
             type: 'POST',
             data: formData,
             async: true,
             success: function(data, textStatus, jqXHR) {
-                console.log(data);
                 if (formData.get('genes') === '') self.showGeneTable(false);
                 self.concepts(data.concepts.map(function(concept) {
                     concept.show = ko.observable(true);
                     return concept;
                 }));
-                self.getPredicates();
-            },
-            cache: false,
-            contentType: false,
-            processData: false
-        });
-    };
-    
-    self.getPredicates = function() {
-        var data = {concepts: self.concepts().map(function(c) { return c.id })};
-        $.ajax({
-            url: '/predicates',
-            type: 'POST',
-            dataType: 'json',
-            contentType: 'application/json; charset=utf-8',
-            success: function (data) {
-                console.log(data);
-                console.log('----------------------\n');
                 self.publicationMax(d3.max(data.predicates, function(p) { return p.publicationCount; }))
                 self.dirty(false);
                 self.predicates(data.predicates);
@@ -133,8 +118,11 @@ function ViewModel() {
                 }));
                 $('#predicates-filter').multipleSelect('refresh');
                 self.graphDirty(true);
+                self.loading(false);
             },
-            data: JSON.stringify(data)
+            cache: false,
+            contentType: false,
+            processData: false
         });
     };
     

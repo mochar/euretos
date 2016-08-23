@@ -8,18 +8,8 @@ from app import app, euretos, randomcolor
 random_color = randomcolor.RandomColor()
 
 
-@app.route('/concepts', methods=['GET', 'POST'])
-def concepts():
-    metabolites = request.form['metabolites'].splitlines()
-    genes = request.form['genes'].splitlines()
-    concepts_ = euretos.chebis_to_concepts(metabolites, flatten=True)
-    concepts_.extend(euretos.entrez_to_concepts(genes, flatten=True))
-    return jsonify({'concepts': concepts_})
-
-
-@app.route('/predicates', methods=['GET', 'POST'])
-def predicates():
-    triples = euretos.find_triples(request.json['concepts'])
+def find_triples(concepts):
+    triples = euretos.find_triples(concepts)
     all_predicates = {}
     colors = random_color.generate(count=len(triples), luminosity='dark')
     for i, triple in enumerate(triples):
@@ -30,9 +20,19 @@ def predicates():
             triple['color'] = t['color']
         else:
             triple['color'] = all_predicates[triple['id']]['color']
-    return jsonify({'predicates': triples, 
-        'all': list(all_predicates.values())})
-    
+    return triples, list(all_predicates.values())
+
+
+@app.route('/concepts', methods=['GET', 'POST'])
+def concepts():
+    metabolites = request.form['metabolites'].splitlines()
+    genes = request.form['genes'].splitlines()
+    concepts_ = euretos.chebis_to_concepts(metabolites, flatten=True)
+    concepts_.extend(euretos.entrez_to_concepts(genes, flatten=True))
+    triples, all_predicates = find_triples([c['id'] for c in concepts_])
+    return jsonify({'concepts': concepts_, 'predicates': triples,
+        'all': all_predicates})
+
 
 @app.route('/')
 def home():
