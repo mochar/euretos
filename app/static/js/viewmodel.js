@@ -29,6 +29,7 @@ function Table(data, columns, url) {
     self.filteredData = ko.computed(function() {
         var searchWord = self.searchWord(),
             data = self.data();
+        if (self.pagination) self.pagination.page(1);
         return data.filter(function(d) {
             return d.name.lastIndexOf(searchWord, 0) === 0;
         });
