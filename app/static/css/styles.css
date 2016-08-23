@@ -95,8 +95,9 @@ a:visited { color: #67041d; }
 }
 
 #graph {
-    height: 600px;
+    /*height: 600px;*/
     position: relative;
+    padding-top: .5em;
 }
 
 .button {
@@ -133,6 +134,12 @@ a:visited { color: #67041d; }
 .button-styled:disabled {
     color: grey;
     border-color: white;
+}
+
+.button-transparent {
+    background-color: transparent;
+    border: 0;
+    color: #555;
 }
 
 .button-strong {
