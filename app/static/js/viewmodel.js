@@ -76,7 +76,7 @@ function ViewModel() {
     
     // Whether to show the genes table (true) or metabolites table (false)
     // Boolean for ease of use
-    self.showGeneTable = ko.observable(true);
+    self.tab = ko.observable('graph');
     
     self.reset = function() {
         self.concepts([]);
@@ -93,6 +93,9 @@ function ViewModel() {
     // that need to update the graph.
     ko.computed(function() {
         self.publicationCount();
+        self.oneColor();
+        self.sameWidth();
+        self.lonelyConcepts();
         self.dirty(true);
     });
     
@@ -105,7 +108,6 @@ function ViewModel() {
             data: formData,
             async: true,
             success: function(data, textStatus, jqXHR) {
-                if (formData.get('genes') === '') self.showGeneTable(false);
                 self.concepts(data.concepts.map(function(concept) {
                     concept.show = ko.observable(true);
                     return concept;
@@ -154,24 +156,6 @@ function ViewModel() {
         },
         onUncheckAll: function() {
             self.allPredicates().forEach(function(p) { p.show = true; });
-            self.dirty(true);
-        }
-    });
-    
-    $('#options').multipleSelect({
-        placeholder: 'Options',
-        selectAll: false,
-        onClick: function(view) {
-            switch(view.value) {
-                case 'oneColor':
-                    self.oneColor(view.checked);
-                    break;
-                case 'sameWidth':
-                    self.sameWidth(view.checked);
-                    break;
-                case 'lonelyConcepts':
-                    self.lonelyConcepts(view.checked);
-            }
             self.dirty(true);
         }
     });
