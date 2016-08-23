@@ -191,17 +191,22 @@ a:visited { color: #67041d; }
     border: 1px dashed #ddd;
 }
 
-#genes table {
+#genes {
     border-left: 3px solid black;
 }
 
-#metabolites table {
+#metabolites {
     border-left: 3px solid #b30303;
+}
+
+.result-table {
+    border-top: 0;
 }
 
 .panel-toolbar {
     padding: .3em;
     display: inline-block;
+    border-bottom: 0;
 }
 
 .table-container {
