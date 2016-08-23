@@ -28,7 +28,7 @@
         
         <div data-bind="visible: concepts().length > 0">
             <!--<button class="button" data-bind="click: function() { graphDirty(true); }">Update</button>-->
-            <div class="pure-g">
+            <div class="pure-g" id="tabs">
                 <div class="pure-u-1-5">
                     <button class="button button-strong button-transparent button-block" data-bind="click: reset">
                         <span class="fa fa-arrow-left"></span> Back
@@ -38,20 +38,20 @@
                 <div class="pure-u-1-5" style="padding-right: .3em">
                     <button class="button button-block"
                             data-bind="click: function() {tab('graph'); },
-                                    css: tab() === 'graph' ? 'button-primary' : 'button-styled'">
+                                    css: tab() === 'graph' ? 'button-selected' : 'button-styled'">
                             Graph</button>
                 </div>
                 <div class="pure-u-1-5">
                     <button class="button button-block"
                             data-bind="click: function() {tab('genes'); },
-                                    css: tab() === 'genes' ? 'button-primary' : 'button-styled',
+                                    css: tab() === 'genes' ? 'button-selected' : 'button-styled',
                                     enable: genes().length > 0">
                             Genes</button>
                 </div>
                 <div class="pure-u-1-5">
                     <button class="button button-block"
                             data-bind="click: function() {tab('metabolites'); },
-                                    css: tab() === 'metabolites' ? 'button-primary' : 'button-styled',
+                                    css: tab() === 'metabolites' ? 'button-selected' : 'button-styled',
                                     enable: metabolites().length > 0">
                             Metabolites</button>
                 </div>

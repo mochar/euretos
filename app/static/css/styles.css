@@ -122,11 +122,9 @@ a:visited { color: #67041d; }
     color: white;
     font-weight: bold;
     border: 1px solid #ab0830;
-    font-size: .9em;
 }
 
 .button-styled {
-    color: #67041d;
     cursor: pointer;
 }
 
@@ -140,6 +138,12 @@ a:visited { color: #67041d; }
     border-color: white;
 }
 
+.button-selected {
+    color: #ab0830;
+    font-weight: bold;
+    border: 1px solid #ab0830;
+}
+
 .button-transparent {
     background-color: transparent;
     border: 0;
@@ -148,7 +152,6 @@ a:visited { color: #67041d; }
 
 .button-strong {
     font-weight: bold;
-    font-size: .9em;
 }
 
 .button-flexible {
@@ -234,8 +237,12 @@ a:visited { color: #67041d; }
 #update-button {
     position: absolute;
     width: 7em;
-    height: 3em;
+    height: 2.5em;
     right: 1em;
+}
+
+#tabs {
+    font-size: .9em;
 }
 
 /* D3 */
