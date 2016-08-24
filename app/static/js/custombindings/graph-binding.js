@@ -15,7 +15,6 @@ ko.bindingHandlers.graph = {
             
         svg.call(d3.zoom()
             .scaleExtent([0.4, 8])
-            .translateExtent([[0-width*1.5, 0-height*1.5], [width*2.5, height*2.5]])
             .on('zoom', function() {
                 g.attr('transform', d3.event.transform);
             }));
