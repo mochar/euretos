@@ -74,6 +74,7 @@ ko.bindingHandlers.graph = {
         // not have a width, so initialise dummy values here.
         concepts.forEach(function(concept) {
             concept.width = 1;
+            concept.fade = false;
         });
 
         var width = $(element).width(),
@@ -133,7 +134,8 @@ ko.bindingHandlers.graph = {
         node = node.enter().append('g')
             .attr('class', 'node')
             .on('click', function(d, i) {
-                console.log(d);
+                d.fade = !d.fade;
+                fade(d.fade ? .1 : 1)(d, i);
             })
             .call(d3.drag()
                 .on('start', dragstarted)
@@ -240,6 +242,31 @@ ko.bindingHandlers.graph = {
             if (!d3.event.active) simulation.alphaTarget(0);
             d.fx = null;
             d.fy = null;
+        }
+        
+        function fade(opacity) {
+            return function(c, i) {
+                var predicates_ = predicates.filter(function(p) {
+                        return p.tripleId && p.source.id == c.id;
+                    }),
+                    triples = predicates_.map(function(p) { return p.tripleId; }),
+                    connectedConcepts = predicates_.map(function(p) {
+                        return p.target.id;
+                    });
+                svg.selectAll('g.nodes rect')
+                    .filter(function(d) { 
+                        return d.id != c.id && connectedConcepts.indexOf(d.id) == -1; 
+                    })
+                    .transition()
+                    .style('opacity', opacity);
+                
+                svg.selectAll('g.links path')
+                    .filter(function(d) {
+                        return triples.indexOf(d[3].tripleId) == -1;
+                    })
+                    .transition()
+                    .style('opacity', opacity);
+            };
         }
     }
 };
