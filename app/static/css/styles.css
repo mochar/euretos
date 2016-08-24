@@ -179,13 +179,9 @@ a:visited { color: #67041d; }
     margin-top: 1em;
 }
 
-#result > table > tbody > tr {
+#result table > tbody > tr:hover {
+    background-color: #eee;
     cursor: pointer;
-}
-
-#result > table > tbody > tr:hover {
-    border: 1px solid darkgrey;
-    background-color: #ddd;
 }
 
 #type-select {
