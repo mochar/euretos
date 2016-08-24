@@ -57,6 +57,7 @@
 
 
 <div class="panel" style="margin-top: 2em" data-bind="visible: tab() === 'graph'">
+    <!-- ko with: enrichmentVM -->
     <h4>Enrichment</h4>
     
     <form data-bind="submit: enrich">
@@ -77,4 +78,23 @@
             Submit
         </button>
     </form>
+    
+    <!-- ko if: gos().length > 0 -->
+    <table style="margin-top: .5em">
+        <thead>
+            <tr>
+                <th width="80%">Name</th>
+                <th width="20%">Score</th>
+            </tr>
+        </thead>
+        <tbody data-bind="foreach: gos">
+            <tr>
+                <td data-bind="text: name"></td>
+                <td data-bind="text: score"></td>
+            </tr>
+        </tbody>
+    </table>
+    <!-- /ko -->
+
+    <!-- /ko -->
 </div>

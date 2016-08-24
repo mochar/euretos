@@ -179,7 +179,7 @@ a:visited { color: #67041d; }
     margin-top: 1em;
 }
 
-#result table > tbody > tr:hover {
+#result-table > tbody > tr:hover {
     background-color: #eee;
     cursor: pointer;
 }

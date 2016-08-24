@@ -9,6 +9,7 @@ class Enrichment:
         self.cutoff = 100
         self._find_go_concepts(go)
         self.matrix = self.calculate_matrix()
+        self.sort()
         
     def _find_go_concepts(self, go):
         concepts = self.euretos.find_go_concepts(go)
@@ -47,3 +48,8 @@ class Enrichment:
                               for id_ in all_ids])
                 matrix[i][j] = np.inner(np.array(a), np.array(b))
         return matrix
+
+    def sort(self):
+        scores = self.matrix.sum(axis=1)
+        indices = scores.argsort()[::-1]
+        self.sorted_concepts = [{'name': self._concepts[self.concepts[i]], 'score': scores[i]} for i in indices]

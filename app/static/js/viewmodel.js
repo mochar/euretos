@@ -38,6 +38,30 @@ function Table(data, columns, url) {
     self.pagination = new Pagination(self.filteredData);
 }
 
+function EnrichmentViewModel(concepts) {
+    var self = this;
+    self.enriching = ko.observable(false);
+    self.gos = ko.observableArray([]);
+    self.concepts = concepts;
+
+    self.enrich = function(formElement) {
+        self.enriching(true);
+        var formData = new FormData(formElement),
+            concepts = self.concepts().map(function(c) { return c.id; }),
+            data = {go: formData.get('go'), concepts: concepts};
+        $.ajax({
+            type: 'POST',
+            url: '/enrichment',
+            data: data,
+            success: function(data){
+                self.gos(data.gos);
+                self.enriching(false);
+            },
+            dataType: 'json'
+        });
+    };
+}
+
 function ViewModel() {
     var self = this;
     
@@ -69,7 +93,6 @@ function ViewModel() {
     
     // True when waiting response from server
     self.loading = ko.observable(false);
-    self.enriching = ko.observable(false);
     
     // Graph updating
     self.dirty = ko.observable(false); // Automatically set to true when a parameter changes
@@ -78,6 +101,7 @@ function ViewModel() {
     // Whether to show the genes table (true) or metabolites table (false)
     // Boolean for ease of use
     self.tab = ko.observable('graph');
+    self.enrichmentVM = new EnrichmentViewModel(self.concepts);
     
     self.reset = function() {
         self.concepts([]);
@@ -127,23 +151,6 @@ function ViewModel() {
             cache: false,
             contentType: false,
             processData: false
-        });
-    };
-    
-    self.enrich = function(formElement) {
-        self.enriching(true);
-        var formData = new FormData(formElement),
-            concepts = self.concepts().map(function(c) { return c.id; }),
-            data = {go: formData.get('go'), concepts: concepts};
-        $.ajax({
-            type: 'POST',
-            url: '/enrichment',
-            data: data,
-            success: function(data){
-                console.table(data.matrix);
-                self.enriching(false);
-            },
-            dataType: 'json'
         });
     };
     

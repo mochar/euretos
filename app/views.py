@@ -39,8 +39,7 @@ def concepts():
 def enrichment():
     concepts_ = request.form.getlist('concepts[]')
     en = Enrichment(euretos, concepts_, request.form['go'])
-    return jsonify({'matrix': en.matrix.tolist(), 'gos': en.concepts,
-        'concepts': en.metabolites})
+    return jsonify({'gos': en.sorted_concepts})
 
 
 @app.route('/')
