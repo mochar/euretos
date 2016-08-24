@@ -69,6 +69,7 @@ function ViewModel() {
     
     // True when waiting response from server
     self.loading = ko.observable(false);
+    self.enriching = ko.observable(false);
     
     // Graph updating
     self.dirty = ko.observable(false); // Automatically set to true when a parameter changes
@@ -126,6 +127,23 @@ function ViewModel() {
             cache: false,
             contentType: false,
             processData: false
+        });
+    };
+    
+    self.enrich = function(formElement) {
+        self.enriching(true);
+        var formData = new FormData(formElement),
+            concepts = self.concepts().map(function(c) { return c.id; }),
+            data = {go: formData.get('go'), concepts: concepts};
+        $.ajax({
+            type: 'POST',
+            url: '/enrichment',
+            data: data,
+            success: function(data){
+                console.table(data.matrix);
+                self.enriching(false);
+            },
+            dataType: 'json'
         });
     };
     

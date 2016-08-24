@@ -3,6 +3,7 @@ import uuid
 from flask import session, render_template, request, jsonify
 
 from app import app, euretos, randomcolor
+from app.scripts.enrichment import Enrichment
 
 
 random_color = randomcolor.RandomColor()
@@ -32,6 +33,14 @@ def concepts():
     triples, all_predicates = find_triples([c['id'] for c in concepts_])
     return jsonify({'concepts': concepts_, 'predicates': triples,
         'all': all_predicates})
+
+
+@app.route('/enrichment', methods=['GET', 'POST'])
+def enrichment():
+    concepts_ = request.form.getlist('concepts[]')
+    en = Enrichment(euretos, concepts_, request.form['go'])
+    return jsonify({'matrix': en.matrix.tolist(), 'gos': en.concepts,
+        'concepts': en.metabolites})
 
 
 @app.route('/')

@@ -15,6 +15,11 @@ h3 {
     text-align: center;
 }
 
+h4 {
+    margin-top: 0;
+    color: #660000;
+}
+
 strong {
     color: #555;
 }
@@ -237,7 +242,7 @@ a:visited { color: #67041d; }
 #update-button {
     position: absolute;
     width: 7em;
-    height: 2.5em;
+    height: 2.2em;
     right: 1em;
 }
 
