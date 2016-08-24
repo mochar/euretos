@@ -104,9 +104,10 @@ function ViewModel() {
     self.enrichmentVM = new EnrichmentViewModel(self.concepts);
     
     self.reset = function() {
-        self.concepts([]);
         self.predicates([]);
         self.allPredicates([]);
+        self.enrichmentVM.gos([]);
+        self.concepts([]);
     }
     
     self.updateGraph = function() {
