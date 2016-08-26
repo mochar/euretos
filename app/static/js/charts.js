@@ -347,15 +347,12 @@ function graphChart(selector) {
         allPredicates = [],
         allPredicatesById = d3.map(),
         bilinks = [];
-    
-    // d3-force simulation object
-    // Link nodes are identified by d.id, so we don't have to add the nodes 
-    // manually to the link objects.
-    var simulation = d3.forceSimulation()
-        .force('link', d3.forceLink().id(function(d) { return d.id; }).distance(100))
-        .force('charge', d3.forceManyBody().strength(-40))
-        .force('center', d3.forceCenter())
-        .on('tick', ticked);
+        
+    // d3-force objects
+    var linkForce = d3.forceLink(),
+        chargeForce = d3.forceManyBody().strength(-40),
+        centerForce = d3.forceCenter(),
+        simulation = d3.forceSimulation().on('tick', ticked);
         
     // Chart initialisation
     var svg = d3.select(selector).append('svg'),
@@ -374,9 +371,11 @@ function graphChart(selector) {
         svg.attr('width', width).attr('height', height);
         
         // Update simulation
-        simulation.nodes(concepts);
-        simulation.force('link').links(predicates);
-        simulation.force('center').x(width / 2).y(height / 2);
+        simulation
+            .nodes(concepts)
+            .force('link', linkForce.links(predicates))
+            .force('charge', chargeForce)
+            .force('center', centerForce.x(width / 2).y(height / 2))
         
         // Create arrow-head markers per predicate-type
         var marker = defs.selectAll('marker')
@@ -404,7 +403,7 @@ function graphChart(selector) {
         link.exit().remove(); 
         link = link.enter().append('path')
             .attr('class', 'link')
-            .merge(link)
+          .merge(link)
             .attr('stroke-width', function(d) { 
                 return sameWidth ? 2 : linkWidth(d[3].publicationCount); 
             })
@@ -516,10 +515,10 @@ function graphChart(selector) {
     function dragstarted(d) {
         if (!d3.event.active) simulation.alphaTarget(0.3).restart();
         // Stop de simulation when the first node is dragged.
-        // simulation
-        //     .force('charge', null)
-        //     .force('center', null)
-        //     .force('link', null);
+        simulation
+            .force('charge', null)
+            .force('center', null)
+            .force('link', null);
         d.fx = d.x;
         d.fy = d.y;
     }
@@ -575,18 +574,26 @@ function graphChart(selector) {
                    conceptsById.get(p.target);
         });
         
+        predicates.forEach(function(predicate) {
+            predicate.source = conceptsById.get(predicate.source);
+            predicate.target = conceptsById.get(predicate.target);
+        });
+        
         // Intermediate nodes will have a negative id to distinguish them from
         // actual nodes.
         bilinks = [];
         predicates.forEach(function(predicate, i) {
-            var s = conceptsById.get(predicate.source),
-                t = conceptsById.get(predicate.target),
-                i = {id: -1 * (i + 1), source: predicate.source, target: predicate.target};
+            var s = predicate.source,
+                t = predicate.target,
+                i = {id: -1 * (i + 1), 
+                    source: predicate.source.id, 
+                    target: predicate.target.id};
             concepts.push(i);
-            predicates.push({source: predicate.source, target: i.id}, 
-                            {source: i.id, target: predicate.target});
+            predicates.push({source: s, target: i}, 
+                            {source: i, target: t});
             bilinks.push([s, i, t, predicate]);
         });
+        simulation.alpha(.5).restart();
         return chart;
     };
     
