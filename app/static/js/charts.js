@@ -349,8 +349,8 @@ function graphChart(selector) {
         bilinks = [];
         
     // d3-force objects
-    var linkForce = d3.forceLink(),
-        chargeForce = d3.forceManyBody().strength(-40),
+    var linkForce = d3.forceLink().distance(100),
+        chargeForce = d3.forceManyBody().strength(-80),
         centerForce = d3.forceCenter(),
         simulation = d3.forceSimulation().on('tick', ticked);
         
@@ -594,6 +594,47 @@ function graphChart(selector) {
             bilinks.push([s, i, t, predicate]);
         });
         simulation.alpha(.5).restart();
+        return chart;
+    };
+    
+    chart.lonelyConcepts = function(value) {
+        if (!arguments.length) return lonelyConcepts;
+        lonelyConcepts = value;
+        // Filter concepts to only connected ones
+        if (!lonelyConcepts) {
+            var connectedConcepts = [];
+            predicates.forEach(function(predicate) {
+                connectedConcepts.push(predicate.source, predicate.target);
+            });
+            concepts = concepts.filter(function(c) { 
+                return connectedConcepts.indexOf(c.id) > -1; 
+            });
+        }
+        return chart;
+    };
+    
+    chart.publicationCount = function(value) {
+        if (!arguments.length) return publicationCount;
+        publicationCount = value;
+        return chart;
+    };
+    
+    chart.publicationMax = function(value) {
+        if (!arguments.length) return publicationMax;
+        publicationMax = value;
+        linkWidth.domain([1, publicationMax]);
+        return chart;
+    };
+    
+    chart.oneColor = function(value) {
+        if (!arguments.length) return oneColor;
+        oneColor = value;
+        return chart;
+    };
+    
+    chart.sameWidth = function(value) {
+        if (!arguments.length) return sameWidth;
+        sameWidth = value;
         return chart;
     };
     
