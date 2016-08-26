@@ -85,6 +85,12 @@ a:visited { color: #67041d; }
     padding: 1em;
 }
 
+.panel:hover {
+    border-color: #e81c4f;
+    -webkit-transition: border-color .2s;
+    transition: border-color .2s;
+}
+
 #left {
     padding: .6em;
     padding-top: .5em;
