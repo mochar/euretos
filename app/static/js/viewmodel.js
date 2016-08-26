@@ -108,6 +108,7 @@ function ViewModel() {
         self.allPredicates([]);
         self.enrichmentVM.gos([]);
         self.concepts([]);
+        self.updateChart();
     }
     
     self.updateChart = function() {

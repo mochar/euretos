@@ -96,7 +96,9 @@ function graphChart(selector) {
         var nodeEnter = node.enter().append('g')
             .attr('class', 'node')
             .on('click', function(d, i) { 
-                console.log(d); 
+                console.log(d);
+                d.fade = !d.fade;
+                fade(d.fade ? .1 : 1)(d, i);
             })
             .call(d3.drag()
                 .on('start', dragstarted)
@@ -207,6 +209,31 @@ function graphChart(selector) {
         d.fy = null;
     }
     
+    function fade(opacity) {
+        return function(c, i) {
+            var predicates_ = predicates.filter(function(p) {
+                    return p.tripleId && p.source.id == c.id;
+                }),
+                triples = predicates_.map(function(p) { return p.tripleId; }),
+                connectedConcepts = predicates_.map(function(p) {
+                    return p.target.id;
+                });
+            svg.selectAll('g.nodes rect')
+                .filter(function(d) { 
+                    return d.id != c.id && connectedConcepts.indexOf(d.id) == -1; 
+                })
+                .transition()
+                .style('opacity', opacity);
+            
+            svg.selectAll('g.links path')
+                .filter(function(d) {
+                    return triples.indexOf(d[3].tripleId) == -1;
+                })
+                .transition()
+                .style('opacity', opacity);
+        };
+    }
+
     chart.concepts = function(value) {
         if (!arguments.length) return concepts;
         
@@ -215,6 +242,7 @@ function graphChart(selector) {
         value.forEach(function(concept) {
             if (concept.show()) {
                 concept.width = 1;
+                concept.fade = false;
                 var c = conceptsById.get(concept.id);
                 c ? newConcepts.push(c) : newConcepts.push(concept);
             }
