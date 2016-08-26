@@ -373,6 +373,11 @@ function graphChart(selector) {
         // Update the SVG dimensions.
         svg.attr('width', width).attr('height', height);
         
+        // Update simulation
+        simulation.nodes(concepts);
+        simulation.force('link').links(predicates);
+        simulation.force('center').x(width / 2).y(height / 2);
+        
         // Create arrow-head markers per predicate-type
         var marker = defs.selectAll('marker')
             .data(allPredicates.concat(['marker-default']), function(d) { 
@@ -454,11 +459,6 @@ function graphChart(selector) {
             .attr('dy', '.35em');
             
         node = nodeEnter.merge(node);
-        
-        // Update simulation
-        simulation.nodes(concepts);
-        simulation.force('link').links(predicates);
-        simulation.force('center').x(width / 2).y(height / 2);
     }
     
     function ticked() {
@@ -539,6 +539,7 @@ function graphChart(selector) {
         if (!arguments.length) return concepts;
         
         var newConcepts = [];
+        value = $.extend(true, [], value); // deep-copy
         value.forEach(function(concept) {
             if (concept.show()) {
                 concept.width = 1;
@@ -546,25 +547,14 @@ function graphChart(selector) {
                 c ? newConcepts.push(c) : newConcepts.push(concept);
             }
         });
-        console.log(newConcepts);
         conceptsById = d3.map(newConcepts, function(d) { return d.id; });
         concepts.forEach(function(concept) {
             if (concept.id < 0 && 
                 conceptsById.get(concept.source) && 
                 conceptsById.get(concept.target)) newConcepts.push(concept);
         })
-        console.log(newConcepts);
         concepts = newConcepts;
         return chart;
-        
-        // concepts = $.extend(true, [], value); // deep-copy
-        // concepts = concepts.filter(function(c) { return c.show(); });
-        // conceptsById = d3.map(concepts, function(d) { return d.id; });
-        
-        // // Actual width will be added later on, but the intermediate nodes do
-        // // not have a width, so initialise dummy values here.
-        // concepts.forEach(function(concept) { concept.width = 1; });
-        // return chart;
     };
     
     chart.allPredicates = function(value) {
