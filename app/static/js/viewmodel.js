@@ -116,6 +116,11 @@ function ViewModel() {
             .concepts(self.concepts())
             .allPredicates(self.allPredicates())
             .predicates(self.predicates())
+            .publicationCount(self.publicationCount())
+            .publicationMax(self.publicationMax())
+            .oneColor(self.oneColor())
+            .sameWidth(self.sameWidth())
+            .lonelyConcepts(self.lonelyConcepts())
             .width(graphElement.style('width').replace(/px/g, ''))
             .height(graphElement.style('height').replace(/px/g, ''));
         self.graph();
