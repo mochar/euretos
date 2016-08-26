@@ -38,6 +38,30 @@ function Table(data, columns, url) {
     self.pagination = new Pagination(self.filteredData);
 }
 
+function EnrichmentViewModel(concepts) {
+    var self = this;
+    self.enriching = ko.observable(false);
+    self.gos = ko.observableArray([]);
+    self.concepts = concepts;
+
+    self.enrich = function(formElement) {
+        self.enriching(true);
+        var formData = new FormData(formElement),
+            concepts = self.concepts().map(function(c) { return c.id; }),
+            data = {go: formData.get('go'), concepts: concepts};
+        $.ajax({
+            type: 'POST',
+            url: '/enrichment',
+            data: data,
+            success: function(data){
+                self.gos(data.gos);
+                self.enriching(false);
+            },
+            dataType: 'json'
+        });
+    };
+}
+
 function ViewModel() {
     var self = this;
     
@@ -77,11 +101,13 @@ function ViewModel() {
     // Whether to show the genes table (true) or metabolites table (false)
     // Boolean for ease of use
     self.tab = ko.observable('graph');
+    self.enrichmentVM = new EnrichmentViewModel(self.concepts);
     
     self.reset = function() {
-        self.concepts([]);
         self.predicates([]);
         self.allPredicates([]);
+        self.enrichmentVM.gos([]);
+        self.concepts([]);
     }
     
     self.updateChart = function() {

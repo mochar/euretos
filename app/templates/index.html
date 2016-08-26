@@ -8,18 +8,19 @@
         <div data-bind="visible: concepts().length === 0">
             <form data-bind="submit: getConcepts">
                 <div class="pure-g">
-                    <div class="pure-u-1-2">
-                        <h3>Genes (Entrez)</h3>
+                    <div class="panel pure-u-1-2">
+                        <h4>Genes (Entrez)</h4>
                         <textarea rows="20" name="genes" style="width: 100%"></textarea>
                     </div>
-                    <div class="pure-u-1-2">
-                        <h3>Metabolites (ChEBI)</h3>
+                    <div class="panel pure-u-1-2">
+                        <h4>Metabolites (ChEBI)</h4>
                         <textarea rows="20" name="metabolites" 
                             style="width: 100%; margin-left: .3em"></textarea>
                     </div>
                 </div>
                 
-                <button class="button button-primary" type="submit" data-bind="disable: loading">
+                <button class="button button-primary" style="font-size: .9em; margin-top: .5em;" 
+                        type="submit" data-bind="disable: loading">
                     <span class="fa fa-refresh fa-spin" data-bind="visible: loading"></span>
                     Submit
                 </button>

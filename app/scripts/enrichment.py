@@ -3,17 +3,16 @@ import numpy as np
 
 
 class Enrichment:
-    def __init__(self, euretos, metabolites, concepts=None):
+    def __init__(self, euretos, metabolites, go='mf'):
         self.euretos = euretos
         self.metabolites = metabolites
-        self.concepts = concepts
         self.cutoff = 100
-        if concepts is None:
-            self._find_go_concepts()
+        self._find_go_concepts(go)
         self.matrix = self.calculate_matrix()
+        self.sort()
         
-    def _find_go_concepts(self):
-        concepts = self.euretos.find_go_concepts('mf')
+    def _find_go_concepts(self, go):
+        concepts = self.euretos.find_go_concepts(go)
         self._concepts = {c['id']: c['name'] for c in concepts}
         self.concepts = [c['id'] for c in concepts]
                 
@@ -49,3 +48,8 @@ class Enrichment:
                               for id_ in all_ids])
                 matrix[i][j] = np.inner(np.array(a), np.array(b))
         return matrix
+
+    def sort(self):
+        scores = self.matrix.sum(axis=1)
+        indices = scores.argsort()[::-1]
+        self.sorted_concepts = [{'name': self._concepts[self.concepts[i]], 'score': scores[i]} for i in indices]

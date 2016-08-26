@@ -1,4 +1,6 @@
 <div class="panel" id="graph-settings" data-bind="visible: tab() === 'graph'">
+    <h4>Graph settings</h4>
+    
     <div class="pure-g" style="margin-bottom: .5em">
         <div class="pure-u-2-5"><label>Min. # publications</label></div>
         <div class="pure-u-3-5">
@@ -51,4 +53,48 @@
         </div>
         <div class="pure-u-1-2"></div>
     </div>
+</div>
+
+
+<div class="panel" style="margin-top: 2em" data-bind="visible: tab() === 'graph'">
+    <!-- ko with: enrichmentVM -->
+    <h4>Enrichment</h4>
+    
+    <form data-bind="submit: enrich">
+        <div class="pure-g">
+            <div class="pure-u-2-5">
+                <label>Gene ontology</label>
+            </div>
+            <div class="pure-u-3-5">
+                <select name="go" class="ms-choice">
+                    <option value="mf">Molecular function</option>
+                    <option value="bp">Biological process</option>
+                </select>
+            </div>
+        </div>
+        
+        <button class="button button-strong" type="submit" data-bind="disable: enriching">
+            <span class="fa fa-refresh fa-spin" data-bind="visible: enriching"></span>
+            Submit
+        </button>
+    </form>
+    
+    <!-- ko if: gos().length > 0 -->
+    <table style="margin-top: .5em; border-width: 1px 0 1px;">
+        <thead>
+            <tr>
+                <th width="80%">Name</th>
+                <th width="20%">Score</th>
+            </tr>
+        </thead>
+        <tbody data-bind="foreach: gos">
+            <tr>
+                <td data-bind="text: name"></td>
+                <td data-bind="text: score"></td>
+            </tr>
+        </tbody>
+    </table>
+    <!-- /ko -->
+
+    <!-- /ko -->
 </div>
