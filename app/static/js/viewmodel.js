@@ -96,7 +96,7 @@ function ViewModel() {
     
     // Graph updating
     self.dirty = ko.observable(false); // Automatically set to true when a parameter changes
-    self.graphDirty = ko.observable(false); // Set to true to update graph
+    self.graph = graphChart('#graph');
     
     // Whether to show the genes table (true) or metabolites table (false)
     // Boolean for ease of use
@@ -108,10 +108,23 @@ function ViewModel() {
         self.allPredicates([]);
         self.enrichmentVM.gos([]);
         self.concepts([]);
+        self.updateChart();
     }
     
-    self.updateGraph = function() {
-        self.graphDirty(true);
+    self.updateChart = function() {
+        var graphElement = d3.select('#graph');
+        self.graph
+            .concepts(self.concepts())
+            .allPredicates(self.allPredicates())
+            .predicates(self.predicates())
+            .publicationCount(self.publicationCount())
+            .publicationMax(self.publicationMax())
+            .oneColor(self.oneColor())
+            .sameWidth(self.sameWidth())
+            .lonelyConcepts(self.lonelyConcepts())
+            .width(graphElement.style('width').replace(/px/g, ''))
+            .height(graphElement.style('height').replace(/px/g, ''));
+        self.graph();
         self.dirty(false);
     }
     
@@ -146,7 +159,7 @@ function ViewModel() {
                     return predicate;
                 }));
                 $('#predicates-filter').multipleSelect('refresh');
-                self.graphDirty(true);
+                self.updateChart();
                 self.loading(false);
             },
             cache: false,
