@@ -83,7 +83,7 @@ function ViewModel() {
     });
     self.geneTable = new Table(self.genes, ['Gene', 'Euretos', 'Entrez'], 
         'http://www.ncbi.nlm.nih.gov/gene/?term=');
-    
+        
     // Graph parameters
     self.publicationCount = ko.observable(1);
     self.publicationMax = ko.observable(100);
@@ -97,6 +97,13 @@ function ViewModel() {
     // Graph updating
     self.dirty = ko.observable(false); // Automatically set to true when a parameter changes
     self.graph = graphChart('#graph');
+    window.onresize = function() { 
+        var graphElement = d3.select('#graph');
+        self.graph
+            .width(graphElement.style('width').replace(/px/g, ''))
+            .height(graphElement.style('height').replace(/px/g, ''));
+        self.graph();
+    };
     
     // Whether to show the genes table (true) or metabolites table (false)
     // Boolean for ease of use
