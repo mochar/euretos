@@ -12,7 +12,7 @@ function graphChart(selector) {
         nodeHeight = 20,
         linkWidth = d3.scaleLog().domain([1, publicationMax]).range([2, 6]);
         
-    var link, node;
+    var link, node, selectedConcept;
         
     // data variables
     var concepts = [],
@@ -105,9 +105,13 @@ function graphChart(selector) {
         var nodeEnter = node.enter().append('g')
             .attr('class', 'node')
             .on('click', function(d, i) { 
-                console.log(d);
-                d.fade = !d.fade;
-                fade(d.fade ? .1 : 1)(d, i);
+                if (selectedConcept == d.id) {
+                    selectedConcept = null;
+                    fade(1)(d, i);
+                } else {
+                    selectedConcept = d.id;
+                    fade(.1)(d, i);
+                }
             })
             .call(d3.drag()
                 .on('start', dragstarted)
@@ -227,19 +231,18 @@ function graphChart(selector) {
                 connectedConcepts = predicates_.map(function(p) {
                     return p.target.id;
                 });
+                
             svg.selectAll('g.nodes rect')
-                .filter(function(d) { 
-                    return d.id != c.id && connectedConcepts.indexOf(d.id) == -1; 
-                })
-                .transition()
-                .style('opacity', opacity);
+              .transition()
+                .style('opacity', function(d) {
+                    return d.id == c.id || connectedConcepts.indexOf(d.id) > -1 ? 1 : opacity; 
+                });
             
             svg.selectAll('g.links path')
-                .filter(function(d) {
-                    return triples.indexOf(d[3].tripleId) == -1;
-                })
-                .transition()
-                .style('opacity', opacity);
+              .transition()
+                .style('opacity', function(d) {
+                    return triples.indexOf(d[3].tripleId) > -1 ? 1 : opacity;
+                });
         };
     }
 
@@ -251,7 +254,6 @@ function graphChart(selector) {
         value.forEach(function(concept) {
             if (concept.show()) {
                 concept.width = 1;
-                concept.fade = false;
                 var c = conceptsById.get(concept.id);
                 c ? newConcepts.push(c) : newConcepts.push(concept);
             }
