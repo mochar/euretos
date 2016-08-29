@@ -42,6 +42,12 @@ def enrichment():
     return jsonify({'gos': en.sorted_concepts})
 
 
+@app.route('/disorders')
+def disorders():
+    disorder_concepts = euretos.find_disorders(request.args['term'])
+    return jsonify({'concepts': disorder_concepts})
+
+
 @app.route('/')
 def home():
     new_user = False

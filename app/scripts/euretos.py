@@ -134,3 +134,10 @@ class Euretos:
         }
         r = self.s.post(url, data=json.dumps(data))
         return [connection['concepts'][1] for connection in r.json()['content']]
+
+    def find_disorders(self, disorder):
+        url = self.base_url.format('/external/concepts/search')
+        query_string = 'term:\'{}\' AND semanticcategory:\'{}\''.format(disorder, 'Disorders')
+        data = {'queryString': query_string, 'searchType': 'TOKEN'}
+        r = self.s.post(url, data=json.dumps(data))
+        return r.json()

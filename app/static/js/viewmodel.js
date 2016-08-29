@@ -62,6 +62,26 @@ function EnrichmentViewModel(concepts) {
     };
 }
 
+function FocusViewModel() {
+    var self = this;
+
+    self.loading = ko.observable(false);
+    self.disorderTerm = ko.observable('');
+    self.disorderConcepts = ko.observableArray([]);
+    ko.computed(function() {
+        var term = self.disorderTerm();
+        self.loading(true);
+        if (term === '') {
+            self.loading(false);
+            return;
+        }
+        $.get('/disorders', {term: disorderTerm}, function(data) {
+            self.loading(false);
+            self.disorderConcepts(data.concepts);
+        });
+    }).extend({ throttle: 500 });
+}
+
 function ViewModel() {
     var self = this;
     
@@ -99,8 +119,12 @@ function ViewModel() {
     self.selectedConcept = ko.observable();
     self.graph = graphChart('#graph', self.selectedConcept);
     self.focusGraph = graphChart('#focus-graph').strength(-120).distance(150);
+    self.focusVM = new FocusViewModel();
     self.focus = ko.observable(false);
-    self.focus.subscribe(function(focus) { if (focus) self.updateFocusChart(); });
+    self.focus.subscribe(function(focus) { 
+        if (!focus) return;
+        self.updateFocusChart(); 
+    });
     window.onresize = function() { 
         [['#graph', self.graph], ['#focus-graph-container', self.focusGraph]].forEach(function(s) {
             var graphElement = d3.select(s[0]);

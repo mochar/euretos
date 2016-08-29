@@ -4,17 +4,18 @@
         <span class="fa fa-times fa-lg"></span>
     </button>
     <h3 style="margin-top: .5em">Annotation</h3>
+    <!-- ko with: FocusViewModel -->
     <div class="pure-g" style="height: 100%">
-        <div class="pure-u-4-5">
+        <div class="pure-u-3-5">
             <div id="focus-graph"></div>
         </div>
-        <div class="pure-u-1-5">
-            <ul>
-                <li>a</li>
-                <li>a</li>
-                <li>a</li>
-                <li>a</li>
+        <div class="pure-u-2-5">
+            <input type="text" data-bind="textInput: disorderTerm" style="width: 100%" />
+            <span class="fa fa-refresh fa-spin fa-lg" data-bind="visible: loading"></span>
+            <ul data-bind="foreach: disorderConcepts">
+                <li data-bind="text: name"></li>
             </ul>
         </div>
     </div>
+    <!-- /ko -->
 </div>
