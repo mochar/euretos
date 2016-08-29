@@ -74,9 +74,18 @@ function graphChart(selector) {
             .selectAll('.link')
             .data(bilinks, function(d) { return d[3].tripleId; });
         link.exit().remove(); 
-        link = link.enter().append('path')
-            .attr('class', 'link')
-          .merge(link)
+        var linkEnter = link.enter().append('path')
+            .attr('class', 'link');
+        linkEnter
+            .on('mouseover', function(d) {
+                d3.select(this).attr('stroke-dasharray', '2,2');
+            })
+            .on('mouseout', function(d) {
+                d3.select(this).attr('stroke-dasharray', '0');
+            })
+          .append('title')
+            .text(function(d) { return d[3].name; });
+        link = linkEnter.merge(link)
             .attr('stroke-width', function(d) { 
                 return sameWidth ? 2 : linkWidth(d[3].publicationCount); 
             })
