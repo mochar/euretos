@@ -96,13 +96,19 @@ function ViewModel() {
     
     // Graph updating
     self.dirty = ko.observable(false); // Automatically set to true when a parameter changes
-    self.graph = graphChart('#graph');
+    self.selectedConcept = ko.observable();
+    self.graph = graphChart('#graph', self.selectedConcept);
+    self.focusGraph = graphChart('#focus-graph').strength(-120).distance(150);
+    self.focus = ko.observable(false);
+    self.focus.subscribe(function(focus) { if (focus) self.updateFocusChart(); });
     window.onresize = function() { 
-        var graphElement = d3.select('#graph');
-        self.graph
-            .width(graphElement.style('width').replace(/px/g, ''))
-            .height(graphElement.style('height').replace(/px/g, ''));
-        self.graph();
+        [['#graph', self.graph], ['#focus-graph-container', self.focusGraph]].forEach(function(s) {
+            var graphElement = d3.select(s[0]);
+            s[1]
+                .width(graphElement.style('width').replace(/px/g, ''))
+                .height(graphElement.style('height').replace(/px/g, ''));
+            s[1]();
+        })
     };
     
     // Whether to show the genes table (true) or metabolites table (false)
@@ -132,6 +138,28 @@ function ViewModel() {
             .width(graphElement.style('width').replace(/px/g, ''))
             .height(graphElement.style('height').replace(/px/g, ''));
         self.graph();
+        self.dirty(false);
+    }
+    
+    self.updateFocusChart = function() {
+        var graphElement = $('div#focus-graph').parent();
+        var selectedConcept = self.selectedConcept();
+        var concepts = [selectedConcept.id].concat(selectedConcept.connected),
+            concepts = self.concepts().filter(function(c) { 
+                return concepts.indexOf(c.id) > -1;
+            });
+        self.focusGraph
+            .concepts(concepts)
+            .allPredicates(self.allPredicates())
+            .predicates(self.predicates())
+            .publicationCount(self.publicationCount())
+            .publicationMax(self.publicationMax())
+            .oneColor(self.oneColor())
+            .sameWidth(self.sameWidth())
+            .lonelyConcepts(self.lonelyConcepts())
+            .width(graphElement.width())
+            .height(graphElement.height());
+        self.focusGraph();
         self.dirty(false);
     }
     

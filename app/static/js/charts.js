@@ -1,4 +1,4 @@
-function graphChart(selector) {
+function graphChart(selector, selectedConcept) {
     // config variables
     var publicationCount = 1,
         publicationMax = 100,
@@ -12,7 +12,9 @@ function graphChart(selector) {
         nodeHeight = 20,
         linkWidth = d3.scaleLog().domain([1, publicationMax]).range([2, 6]);
         
-    var link, node, selectedConcept;
+    var link, 
+        node,
+        selectedConcept = selectedConcept || ko.observable();
         
     // data variables
     var concepts = [],
@@ -105,11 +107,10 @@ function graphChart(selector) {
         var nodeEnter = node.enter().append('g')
             .attr('class', 'node')
             .on('click', function(d, i) { 
-                if (selectedConcept == d.id) {
-                    selectedConcept = null;
+                if (selectedConcept() && selectedConcept().id == d.id) {
+                    selectedConcept(null);
                     fade(1)(d, i);
                 } else {
-                    selectedConcept = d.id;
                     fade(.1)(d, i);
                 }
             })
@@ -232,6 +233,8 @@ function graphChart(selector) {
                     return p.target.id;
                 });
                 
+            selectedConcept({id: c.id, connected: connectedConcepts});
+            
             svg.selectAll('g.nodes rect')
               .transition()
                 .style('opacity', function(d) {
@@ -361,6 +364,18 @@ function graphChart(selector) {
         height = value;
         return chart;
     };
+    
+    chart.distance = function(value) {
+        if (!arguments.length) return linkForce.distance();
+        linkForce.distance(value);
+        return chart;
+    }
+    
+    chart.strength = function(value) {
+        if (!arguments.length) return chargeForce.strength();
+        chargeForce.strength(value);
+        return chart;
+    }
     
     return chart;
 }

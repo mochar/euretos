@@ -1,0 +1,20 @@
+<!--<div class="panel" id="focus-graph-container" data-bind="visible: focus">-->
+<div class="panel" id="focus-graph-container" data-bind="style: {visibility: focus() ? 'visible' : 'hidden' }">
+    <button class="button button-transparent" data-bind="click: function() { focus(false); }" style="float: left">
+        <span class="fa fa-times fa-lg"></span>
+    </button>
+    <h3 style="margin-top: .5em">Annotation</h3>
+    <div class="pure-g" style="height: 100%">
+        <div class="pure-u-4-5">
+            <div id="focus-graph"></div>
+        </div>
+        <div class="pure-u-1-5">
+            <ul>
+                <li>a</li>
+                <li>a</li>
+                <li>a</li>
+                <li>a</li>
+            </ul>
+        </div>
+    </div>
+</div>
