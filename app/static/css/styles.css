@@ -257,7 +257,7 @@ a:visited { color: #67041d; }
     right: 2em;
     top: 2em;
     bottom: 2em;
-    box-shadow: 0 0 2px #ddd;
+    box-shadow: 0 0 5px #ddd;
 }
 
 .focus-invisible {
