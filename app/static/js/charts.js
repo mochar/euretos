@@ -235,7 +235,7 @@ function graphChart(selector, selectedConcept) {
                 
             selectedConcept({id: c.id, connected: connectedConcepts});
             
-            svg.selectAll('g.nodes rect')
+            svg.selectAll('g.nodes rect, g.nodes text')
               .transition()
                 .style('opacity', function(d) {
                     return d.id == c.id || connectedConcepts.indexOf(d.id) > -1 ? 1 : opacity; 
