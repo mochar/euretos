@@ -20,6 +20,10 @@ h4 {
     color: #660000;
 }
 
+hr {
+    border-color: #fff;
+}
+
 strong {
     color: #555;
 }
@@ -176,7 +180,7 @@ a:visited { color: #67041d; }
 }
 
 #result {
-    margin-top: 1em;
+    /*margin-top: 1em;*/
 }
 
 #result-table > tbody > tr:hover {
@@ -244,6 +248,7 @@ a:visited { color: #67041d; }
 
 #tabs {
     font-size: .9em;
+    margin-bottom: 1em;
 }
 
 #focus-graph-container {

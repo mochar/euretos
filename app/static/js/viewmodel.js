@@ -1,7 +1,7 @@
 function Pagination(data) {
     var self = this;
     self.data = data;
-    self.items = 20;
+    self.items = 13;
     self.page = ko.observable(1);
     self.pages = ko.computed(function() {
         return Math.ceil(self.data().length / self.items);
@@ -168,7 +168,7 @@ function ViewModel() {
     
     // Whether to show the genes table (true) or metabolites table (false)
     // Boolean for ease of use
-    self.tab = ko.observable('graph');
+    self.tab = ko.observable('genes');
     self.enrichmentVM = new EnrichmentViewModel(self.concepts);
     
     self.reset = function() {
