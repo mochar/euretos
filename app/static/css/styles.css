@@ -260,6 +260,19 @@ a:visited { color: #67041d; }
     box-shadow: 0 0 2px #ddd;
 }
 
+.focus-invisible {
+    transform: scale(0);
+    transition: all .2s ease-in-out;
+}
+
+.focus-visible {
+    visibility: visible;
+    z-index: 200;
+    opacity: 1;
+    transform: scale(1);
+    transition: all .2s ease-in-out;
+}
+
 /* D3 */
 .nodes {
     cursor: default;

@@ -1,9 +1,9 @@
-<!--<div class="panel" id="focus-graph-container" data-bind="visible: focus">-->
-<div class="panel" id="focus-graph-container" data-bind="style: {visibility: focus() ? 'visible' : 'hidden' }">
+<!--<div class="panel" id="focus-graph-container" data-bind="style: {visibility: focus() ? 'visible' : 'hidden' }">-->
+<div class="panel focus-invisible" id="focus-graph-container" data-bind="css: focus() ? 'focus-visible' : 'focus-invisible'">
     <button class="button button-transparent" data-bind="click: function() { focus(false); }" style="float: left">
         <span class="fa fa-times fa-lg"></span>
     </button>
-    <h3 style="margin-top: .5em">Annotation</h3>
+    <h3 style="margin-top: 0">Annotation</h3>
     <!-- ko with: focusVM -->
     <div class="pure-g" style="height: 100%">
         <div class="pure-u-3-5">
