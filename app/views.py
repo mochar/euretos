@@ -44,8 +44,15 @@ def enrichment():
 
 @app.route('/disorders')
 def disorders():
-    disorder_concepts = euretos.find_disorders(request.args['term'])
+    disorder_concepts = euretos.search_disorders(request.args['term'])
     return jsonify({'concepts': disorder_concepts})
+
+
+@app.route('/connected', methods=['GET', 'POST'])
+def connected():
+    concepts_ = request.form.getlist('concepts[]')
+    connected_ = euretos.find_connected(concepts_, request.form['concept'])
+    return jsonify({'connected': connected_})
 
 
 @app.route('/')

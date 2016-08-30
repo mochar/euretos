@@ -278,6 +278,11 @@ a:visited { color: #67041d; }
     rx: 3;
 }
 
+.nodes rect.highlight {
+    color: #ab0830;
+    fill: #ab0830;
+}
+
 .nodes text {
     color: white;
     fill: white;

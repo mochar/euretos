@@ -62,12 +62,15 @@ function EnrichmentViewModel(concepts) {
     };
 }
 
-function FocusViewModel() {
+function FocusViewModel(selectedConcept) {
     var self = this;
 
+    self.selectedConcept = selectedConcept;
     self.loading = ko.observable(false);
     self.disorderTerm = ko.observable('');
     self.disorderConcepts = ko.observableArray([]);
+    self.disorder = ko.observable();
+
     ko.computed(function() {
         var term = self.disorderTerm();
         self.loading(true);
@@ -75,11 +78,39 @@ function FocusViewModel() {
             self.loading(false);
             return;
         }
-        $.get('/disorders', {term: disorderTerm}, function(data) {
+        $.get('/disorders', {term: term}, function(data) {
             self.loading(false);
             self.disorderConcepts(data.concepts);
         });
     }).extend({ throttle: 500 });
+    
+    ko.computed(function() {
+        self.loading(true);
+        var disorder = self.disorder(),
+            concept = self.selectedConcept();
+        if (!disorder || !concept) return;
+        var concepts = [concept.id].concat(concept.connnected),
+            data = {concepts: concepts, concept: disorder.id};
+        $.ajax({
+            type: 'POST',
+            url: '/connected',
+            data: data,
+            success: function(data){
+                console.log(data);
+                self.highlightConnected(data.connected);
+                self.loading(false);
+            },
+            dataType: 'json'
+        });
+    });
+
+    self.highlightConnected = function(connected) {
+        var svg = d3.select('#focus-graph').select('g');
+        svg.selectAll('g.nodes rect')
+            .classed('highlight', function(d) {
+                return connected.indexOf(d.id) > -1;
+            });
+    }
 }
 
 function ViewModel() {
@@ -119,7 +150,7 @@ function ViewModel() {
     self.selectedConcept = ko.observable();
     self.graph = graphChart('#graph', self.selectedConcept);
     self.focusGraph = graphChart('#focus-graph').strength(-120).distance(150);
-    self.focusVM = new FocusViewModel();
+    self.focusVM = new FocusViewModel(self.selectedConcept);
     self.focus = ko.observable(false);
     self.focus.subscribe(function(focus) { 
         if (!focus) return;

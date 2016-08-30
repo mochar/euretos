@@ -135,9 +135,25 @@ class Euretos:
         r = self.s.post(url, data=json.dumps(data))
         return [connection['concepts'][1] for connection in r.json()['content']]
 
-    def find_disorders(self, disorder):
+    def search_disorders(self, disorder):
         url = self.base_url.format('/external/concepts/search')
         query_string = 'term:\'{}\' AND semanticcategory:\'{}\''.format(disorder, 'Disorders')
         data = {'queryString': query_string, 'searchType': 'TOKEN'}
         r = self.s.post(url, data=json.dumps(data))
         return r.json()
+        
+    def find_connected(self, concepts, concept):
+        url = self.base_url.format('/external/concept-to-concept/direct')
+        data = {
+            'additionalFields': ['predicateNames'],
+            'leftInputs': concepts,
+            'rightInputs': [concept],
+            'relationshipWeightAlgorithm': 'PWS', 
+            'sort': 'ASC' 
+        }
+        r = self.s.post(url, data=json.dumps(data))
+        connections = []
+        for connection in r.json()['content']:
+            if 'is associated with' in connection['relationships'][0]['predicateNames']:
+                connections.append(connection['concepts'][0]['id'])
+        return connections
