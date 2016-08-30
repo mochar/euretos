@@ -73,12 +73,8 @@ function FocusViewModel(selectedConcept) {
     self.disordersPagination = new Pagination(self.disorderConcepts);
 
     ko.computed(function() {
-        var term = self.disorderTerm();
         self.loading(true);
-        if (term === '') {
-            self.loading(false);
-            return;
-        }
+        var term = self.disorderTerm();
         $.get('/disorders', {term: term}, function(data) {
             self.loading(false);
             self.disorderConcepts(data.concepts);
@@ -86,7 +82,6 @@ function FocusViewModel(selectedConcept) {
     }).extend({ throttle: 500 });
     
     ko.computed(function() {
-        self.loading(true);
         var disorder = self.disorder(),
             concept = self.selectedConcept();
         if (!disorder || !concept) return;
@@ -99,7 +94,6 @@ function FocusViewModel(selectedConcept) {
             success: function(data){
                 console.log(data);
                 self.highlightConnected(data.connected);
-                self.loading(false);
             },
             dataType: 'json'
         });

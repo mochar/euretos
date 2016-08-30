@@ -273,6 +273,9 @@ a:visited { color: #67041d; }
     transition: all .2s ease-in-out;
 }
 
+.disorder-link:focus { color: #67041d !important; }
+.disorder-link:visited { color: #e81c4f; }
+
 /* D3 */
 .nodes {
     cursor: default;
