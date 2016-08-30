@@ -12,7 +12,7 @@
         <div class="pure-u-2-5">
             <input type="text" data-bind="textInput: disorderTerm" style="width: 100%" />
             <span class="fa fa-refresh fa-spin fa-lg" data-bind="visible: loading"></span>
-            <ul data-bind="foreach: disorderConcepts">
+            <ul data-bind="foreach: disordersPagination.dataToShow">
                 <li>
                     <a href="#" data-bind="click: $parent.disorder, text: name"></a>
                 </li>

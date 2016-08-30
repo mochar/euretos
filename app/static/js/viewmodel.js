@@ -70,6 +70,7 @@ function FocusViewModel(selectedConcept) {
     self.disorderTerm = ko.observable('');
     self.disorderConcepts = ko.observableArray([]);
     self.disorder = ko.observable();
+    self.disordersPagination = new Pagination(self.disorderConcepts);
 
     ko.computed(function() {
         var term = self.disorderTerm();
