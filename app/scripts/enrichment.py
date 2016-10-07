@@ -5,7 +5,7 @@ import numpy as np
 class Enrichment:
     def __init__(self, euretos, metabolites, go='mf'):
         self.euretos = euretos
-        self.metabolites = metabolites
+        self.metabolites = metabolites  
         self.cutoff = 100
         self._find_go_concepts(go)
         self.matrix = self.calculate_matrix()
@@ -46,10 +46,11 @@ class Enrichment:
                 a, b = zip(*[(c_neighbours_by_id.get(id_, {'score':0})['score'], 
                               m_neighbours_by_id.get(id_, {'score':0})['score']) 
                               for id_ in all_ids])
-                matrix[i][j] = np.inner(np.array(a), np.array(b))
+                matrix[i][j] = np.inner(a, b)
         return matrix
 
     def sort(self):
         scores = self.matrix.sum(axis=1)
         indices = scores.argsort()[::-1]
-        self.sorted_concepts = [{'name': self._concepts[self.concepts[i]], 'score': scores[i]} for i in indices]
+        self.sorted_concepts = [{'name': self._concepts[self.concepts[i]], 'score': scores[i]} 
+                                 for i in indices if scores[i] > 0]

@@ -26,8 +26,8 @@ def find_triples(concepts):
 
 @app.route('/concepts', methods=['GET', 'POST'])
 def concepts():
-    metabolites = request.form['metabolites'].splitlines()
-    genes = request.form['genes'].splitlines()
+    metabolites = set(request.form.get('metabolites', '').splitlines())
+    genes = set(request.form.get('genes', '').splitlines())
     concepts_ = euretos.chebis_to_concepts(metabolites, flatten=True)
     concepts_.extend(euretos.entrez_to_concepts(genes, flatten=True))
     triples, all_predicates = find_triples([c['id'] for c in concepts_])

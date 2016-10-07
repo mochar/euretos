@@ -119,12 +119,12 @@ class Euretos:
     def find_go_concepts(self, go):
         """
         TODO: pagination in Euretos
-        Molecular function = mf = go id 322870
-        Biologcal process = bp = go id 1669558
+        Molecular function = mf = go id 0003674 = concept id 243521
+        Biologcal process = bp = go id 0008150 = concept id 2048467
         """
         if go not in ['mf', 'bp']: 
             raise Exception('GO term should be: mf OR bp')
-        go_concept_id = {'mf': '322870', 'bp': '1669558'}[go]
+        go_concept_id = {'mf': '243521', 'bp': '2048467'}[go]
         url = self.base_url.format('/external/concept-to-semantic/direct')
         data = {
             'leftInputs': [go_concept_id], 
@@ -132,7 +132,7 @@ class Euretos:
             'rightInputs': ['sc:Physiology'], 
             'sort': 'ASC'
         }
-        r = self.s.post(url, data=json.dumps(data))
+        r = self.s.post(url, data=json.dumps(data), params={'size': 9999})
         return [connection['concepts'][1] for connection in r.json()['content']]
 
     def search_disorders(self, disorder):
