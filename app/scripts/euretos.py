@@ -72,19 +72,19 @@ class Euretos:
     def _find_triple_ids(self, concepts):
         url = self.base_url.format('/external/concept-to-concept/direct')
         triple_ids = set()
-        for concept in concepts:
-            other_concepts = [c for c in concepts if c != concept]
-            data = {
-                'additionalFields': ['tripleIds'],
-                'leftInputs': [concept],
-                'rightInputs': other_concepts,
-                'relationshipWeightAlgorithm': 'PWS', 
-                'sort': 'ASC' 
-            }
-            r = self.s.post(url, data=json.dumps(data))
-            for x in r.json()['content']:
-                for relationship in x['relationships']:
-                    triple_ids.update(relationship['tripleIds'])
+        data = {
+            'additionalFields': ['tripleIds'],
+            'leftInputs': concepts,
+            'rightInputs': concepts,
+            'relationshipWeightAlgorithm': 'PWS', 
+            'sort': 'ASC' 
+        }
+        r = self.s.post(url, data=json.dumps(data), params={'size': 9999})
+        for x in r.json()['content']:
+            if x['concepts'][0]['id'] == x['concepts'][1]['id']:
+                continue
+            for relationship in x['relationships']:
+                triple_ids.update(relationship['tripleIds'])
         return list(triple_ids)
         
     def find_triples(self, concepts):
