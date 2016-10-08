@@ -1,7 +1,17 @@
 <script type="text/html" id="table-template">
+
+    <!-- ko if: !adding() -->
     <div class="panel panel-toolbar">
-        <span class="fa fa-search"></span>
-        <input type="text" data-bind="textInput: searchWord" />
+        <div class="pure-g">
+            <div class="pure-u-3-5">
+                <span class="fa fa-search"></span>
+                <input type="text" data-bind="textInput: searchWord" />
+            </div>
+            <div class="pure-u-1-5"></div>
+            <div class="pure-u-1-5">
+                <button class="button button-block" data-bind="click: function() {adding(true)}">Add</button>
+            </div>
+        </div>
     </div>
 
     <table class="result-table">
@@ -44,4 +54,32 @@
         </div>
         <div class="pure-u-3-5"></div>
     </div>
+    <!-- /ko -->
+
+    <!-- ko if: adding -->
+    <form data-bind="submit: getConcepts">
+        <div class="panel panel-toolbar">
+            <div class="pure-g">
+                <div class="pure-u-3-5"></div>
+                <div class="pure-u-1-5" style="padding-right: .3em;">
+                    <button class="button button-block" 
+                            data-bind="click: function() {adding(false)},
+                                       visible: data().length > 0,
+                                       disable: loading">
+                        Cancel</button>
+                </div>
+                <div class="pure-u-1-5">
+                    <button class="button button-block button-primary" style="font-size: .9em;"
+                            data-bind="disable: loading">
+                        Submit
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="panel" style="border-top-style: dashed">
+            <textarea rows="20" style="width: 100%;" data-bind="attr: { name: name }"></textarea>
+        </div>
+    </form>
+    <!-- /ko -->
 </script>

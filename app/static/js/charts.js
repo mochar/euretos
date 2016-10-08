@@ -64,8 +64,8 @@ function graphChart(selector, selectedConcept) {
             .attr('refX', 6)
             .attr('markerWidth', 6)
             .attr('markerHeight', 6)
-            .attr('orient', 'auto')
-            .append('path')
+            .attr('orient', 'auto');
+        markerEnter.append('path')
             .attr('d', 'M0,-5L10,0L0,5');
         markerEnter.merge(marker)
             .attr('fill', function(d) { return d.id ? d.color : 'darkgrey'; })

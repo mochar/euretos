@@ -1,7 +1,7 @@
-function Pagination(data) {
+function Pagination(data, items) {
     var self = this;
     self.data = data;
-    self.items = 13;
+    self.items = items || 13;
     self.page = ko.observable(1);
     self.pages = ko.computed(function() {
         return Math.ceil(self.data().length / self.items);
@@ -19,12 +19,16 @@ function Pagination(data) {
     self.canNext = ko.computed(function() { return self.page() < self.pages(); });
 }
 
-function Table(data, columns, url) {
+function Table(data, name, columns, url, parent) {
     var self = this;
+    self.parent = parent;
     self.data = data;
+    self.name = name;
     self.columns = columns;
     self.url = url;
     self.searchWord = ko.observable('');
+    self.adding = ko.observable(true);
+    self.loading = ko.observable(false);
 
     self.filteredData = ko.computed(function() {
         var searchWord = self.searchWord(),
@@ -35,13 +39,26 @@ function Table(data, columns, url) {
         });
     }).extend({ throttle: 500 });
     
-    self.pagination = new Pagination(self.filteredData);
+    self.data.subscribe(function(newVal) {
+        if (newVal.length === 0) self.adding(true);
+    });
+    
+    self.pagination = new Pagination(self.filteredData, 20);
+    
+    self.getConcepts = function(formElement) {
+        self.loading(true);
+        self.parent.getConcepts(formElement, function() {
+            self.loading(false);
+            self.adding(false);
+        });
+    }
 }
 
 function EnrichmentViewModel(concepts) {
     var self = this;
     self.enriching = ko.observable(false);
     self.gos = ko.observableArray([]);
+    self.pagination = new Pagination(self.gos, 11);
     self.concepts = concepts;
 
     self.enrich = function(formElement) {
@@ -120,15 +137,15 @@ function ViewModel() {
     self.metabolites = ko.computed(function() {
         return self.concepts().filter(function(c) { return c.type === 'metabolite'});
     });
-    self.metaboliteTable = new Table(self.metabolites, ['Metabolite', 'Euretos', 'CHEBI'], 
-        'https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI:');
+    self.metaboliteTable = new Table(self.metabolites, 'metabolites', ['Metabolite', 'Euretos', 'CHEBI'], 
+        'https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI:', self);
     
     // Gene concepts
     self.genes = ko.computed(function() {
         return self.concepts().filter(function(c) { return c.type === 'gene'});
     });
-    self.geneTable = new Table(self.genes, ['Gene', 'Euretos', 'Entrez'], 
-        'http://www.ncbi.nlm.nih.gov/gene/?term=');
+    self.geneTable = new Table(self.genes, 'genes', ['Gene', 'Euretos', 'Entrez'], 
+        'http://www.ncbi.nlm.nih.gov/gene/?term=', self);
         
     // Graph parameters
     self.publicationCount = ko.observable(1);
@@ -136,9 +153,6 @@ function ViewModel() {
     self.oneColor = ko.observable(false);
     self.sameWidth = ko.observable(false);
     self.lonelyConcepts = ko.observable(false);
-    
-    // True when waiting response from server
-    self.loading = ko.observable(false);
     
     // Graph updating
     self.dirty = ko.observable(false); // Automatically set to true when a parameter changes
@@ -163,7 +177,7 @@ function ViewModel() {
     
     // Whether to show the genes table (true) or metabolites table (false)
     // Boolean for ease of use
-    self.tab = ko.observable('genes');
+    self.tab = ko.observable('graph');
     self.enrichmentVM = new EnrichmentViewModel(self.concepts);
     
     self.reset = function() {
@@ -223,33 +237,52 @@ function ViewModel() {
         self.dirty(true);
     });
     
-    self.getConcepts = function(formElement) {
-        var formData = new FormData(formElement);
-        self.loading(true);
+    self.ajaxConcepts = function(formData, onSuccess) {
         $.ajax({
             url: '/concepts',
             type: 'POST',
             data: formData,
             async: true,
-            success: function(data, textStatus, jqXHR) {
-                self.concepts(data.concepts.map(function(concept) {
-                    concept.show = ko.observable(true);
-                    return concept;
-                }));
-                self.publicationMax(d3.max(data.predicates, function(p) { return p.publicationCount; }))
-                self.dirty(false);
-                self.predicates(data.predicates);
-                self.allPredicates(data.all.map(function(predicate) {
-                    predicate.show = true;
-                    return predicate;
-                }));
-                $('#predicates-filter').multipleSelect('refresh');
-                self.updateChart();
-                self.loading(false);
-            },
+            success: onSuccess,
             cache: false,
             contentType: false,
             processData: false
+        });
+    }
+    
+    self.getConcepts = function(formElement, callback) {
+        var formData = new FormData(formElement);
+        
+        // Add current concept IDs to list
+        var conceptIds, all;
+        conceptIds = self.concepts()
+            .filter(function(c) { return c.type === 'metabolite' })
+            .map(function(c) { return c.sourceId; });
+        if (formData.get('metabolites')) $.merge(conceptIds, formData.get('metabolites').split(/\n/));
+        formData.set('metabolites', conceptIds.join('\n'));
+        
+        conceptIds = self.concepts()
+            .filter(function(c) { return c.type === 'gene' })
+            .map(function(c) { return c.sourceId; });
+        if (formData.get('genes')) $.merge(conceptIds, formData.get('genes').split(/\n/));
+        formData.set('genes', conceptIds.join('\n'));
+        
+        // 
+        self.ajaxConcepts(formData, function(data, textStatus, jqXHR) {
+            self.concepts(data.concepts.map(function(concept) {
+                concept.show = ko.observable(true);
+                return concept;
+            }));
+            self.publicationMax(d3.max(data.predicates, function(p) { return p.publicationCount; }))
+            self.dirty(false);
+            self.predicates(data.predicates);
+            self.allPredicates(data.all.map(function(predicate) {
+                predicate.show = true;
+                return predicate;
+            }));
+            $('#predicates-filter').multipleSelect('refresh');
+            self.updateChart();
+            callback();
         });
     };
     
