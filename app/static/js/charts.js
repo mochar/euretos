@@ -37,9 +37,10 @@ function graphChart(selector, selectedConcept) {
     g.append('g').attr('class', 'links');
     g.append('g').attr('class', 'nodes');
 
-    svg.call(d3.zoom()
+    var zoom = d3.zoom()
         .scaleExtent([0.4, 8])
-        .on('zoom', function() { g.attr('transform', d3.event.transform); }));
+        .on('zoom', function() { g.attr('transform', d3.event.transform); });
+    svg.call(zoom);
     
     function chart() {
         // Update the SVG dimensions.
@@ -247,6 +248,26 @@ function graphChart(selector, selectedConcept) {
                     return triples.indexOf(d[3].tripleId) > -1 ? 1 : opacity;
                 });
         };
+    }
+    
+    chart.zoom = function(concept) {
+        concepts.forEach(function(c) {
+            if (c.id === concept.id) {
+                var x0 = c.x,
+                    x1 = c.x + c.width,
+                    y0 = c.y,
+                    y1 = c.y + nodeHeight,
+                    k = 0.2 / Math.max((x1 - x0) / width, (y1 - y0) / height),
+                    tx = (width - k * (x0 + x1)) / 2,
+                    ty = (height - k * (y0 + y1)) / 2;
+                svg.transition()
+                    .duration(1500)
+                    .call(zoom.transform, d3.zoomIdentity
+                        .translate(tx, ty)
+                        .scale(k));
+                return;
+            }
+        })
     }
 
     chart.concepts = function(value) {

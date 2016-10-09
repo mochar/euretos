@@ -30,7 +30,9 @@
                         data-bind="checked: show, 
                                     click: function() { $root.dirty(true); return true; }" />
                 </td>
-                <td data-bind="text: name"></td>
+                <td>
+                    <a href="#" data-bind="click: $root.graph.zoom, text: name"></a>
+                </td>
                 <td data-bind="text: id"></td>
                 <td>
                     <a data-bind="text: sourceId, attr: {href: $parent.url + sourceId}"></a>
