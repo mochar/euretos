@@ -90,8 +90,9 @@ function FocusViewModel(selectedConcept) {
     self.disordersPagination = new Pagination(self.disorderConcepts);
 
     ko.computed(function() {
-        self.loading(true);
         var term = self.disorderTerm();
+        if (!term) return;
+        self.loading(true);
         $.get('/disorders', {term: term}, function(data) {
             self.loading(false);
             self.disorderConcepts(data.concepts);
