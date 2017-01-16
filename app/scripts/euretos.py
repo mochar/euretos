@@ -6,31 +6,38 @@ import configparser
 
 
 class Euretos:
-    def __init__(self, config_file='config.ini'):
+    def __init__(self, config_file='config.ini', api_key=None):
         config = configparser.ConfigParser()
         config.read(config_file)
         self.base_url = config['data']['url'] + '{}'
         self.s = requests.Session()
         self.s.headers.update(
             {'content-type': 'application/json; charset=UTF-8'})
-        self.log_in(config['data']['username'], config['data']['password'])
+        self.log_in(config['data']['username'], config['data']['password'], api_key)
         
     def _flatten_concepts(self, concepts):
         flattened_concepts = []
         for source_id, cs in concepts.items():
             # TODO
-            flattened_concept = {'name': cs[0]['name'], 
-                'type': cs[0]['type'], 'sourceId': source_id, 
-                'id': cs[0]['id']}
-            flattened_concepts.append(flattened_concept)
+            # flattened_concept = {'name': cs[0]['name'], 
+            #     'type': cs[0]['type'], 'sourceId': source_id, 
+            #     'id': cs[0]['id']}
+            # flattened_concepts.append(flattened_concept)
+            for concept in cs:
+                flattened_concept = {'name': concept['name'], 
+                    'type': concept['type'], 'sourceId': source_id, 
+                    'id': concept['id']}
+                flattened_concepts.append(flattened_concept)
         return flattened_concepts
         
-    def log_in(self, username, password):
-        data = {'username': username, 'password': password}
-        url = self.base_url.format('/login/authenticate')
-        r = self.s.post(url, data=json.dumps(data))
-        print(r.json()['token'])
-        self.s.headers.update({'x-token': r.json()['token']})
+    def log_in(self, username, password, api_key=None):
+        if api_key is None:
+            data = {'username': username, 'password': password}
+            url = self.base_url.format('/login/authenticate')
+            r = self.s.post(url, data=json.dumps(data))
+            api_key = r.json()['token']
+        print(api_key)
+        self.s.headers.update({'x-token': api_key})
     
     def search_for_concepts(self, terms, chunk_size=150):
         url = self.base_url.format('/external/concepts/search')
@@ -43,8 +50,8 @@ class Euretos:
                 'searchType': 'TOKEN',
                 'additionalFields': ['synonyms']
             }
-            r = self.s.post(url, data=json.dumps(data))
-            concepts.extend(r.json())
+            r = self.s.post(url, data=json.dumps(data), params={'size': chunk_size})
+            concepts.extend(r.json()['content'])
         return concepts
         
     def ids_to_concepts(self, ids, prefix, type_, flatten):
@@ -111,6 +118,7 @@ class Euretos:
         url = self.base_url.format('/external/direct-connections-with-scores')
         data = {
             'ids': concept_ids,
+            # 'relationshipWeightAlgorithm': 'jis', 
             'relationshipWeightAlgorithm': 'pws', 
         }
         r = self.s.post(url, data=json.dumps(data))
@@ -118,7 +126,6 @@ class Euretos:
 
     def find_go_concepts(self, go):
         """
-        TODO: pagination in Euretos
         Molecular function = mf = go id 0003674 = concept id 243521
         Biologcal process = bp = go id 0008150 = concept id 2048467
         """
@@ -134,6 +141,9 @@ class Euretos:
         }
         r = self.s.post(url, data=json.dumps(data), params={'size': 9999})
         return [connection['concepts'][1] for connection in r.json()['content']]
+        
+    def _find_go_concepts(self):
+        pass
 
     def search_disorders(self, disorder):
         url = self.base_url.format('/external/concepts/search')
@@ -157,3 +167,14 @@ class Euretos:
             if 'is associated with' in connection['relationships'][0]['predicateNames']:
                 connections.append(connection['concepts'][0]['id'])
         return connections
+
+    def find_inhibitors(self, concept):
+        url = self.base_url.format('/external/direct-connections-with-scores')
+        data = {
+            'additionalFields': ['predicates'],
+            'ids': [concept],
+            'relationshipWeightAlgorithm': 'pws', 
+            'sort': 'ASC' 
+        }
+        r = self.s.post(url, data=json.dumps(data))
+        return r.json()['content']
